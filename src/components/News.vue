@@ -1,5 +1,6 @@
 <template>
-	<section class="content" v-if="loaded">
+	<section class="content">
+		<loading :show="!loaded"></loading>
 		<div class="warp">
 			<div v-if="listNews">
 				<h1 v-html="pageTitle"></h1>
@@ -20,6 +21,7 @@
 					:next="listNews.next"
 				></pagination>
 			</div>
+
 			<article v-if="activeNews">
 				<h1 v-html="pageTitle"></h1>
 				<div v-html="activeNews.content"></div>
@@ -27,7 +29,6 @@
 			</article>
 		</div>
 	</section>
-	<loading :show="loaded" v-else></loading>
 </template>
 
 <script>
@@ -102,6 +103,7 @@
 		},
 		watch: {
 			$route() {
+				this.loaded = false
 				if (this.$route.params.newsSlug)
 					this.fetchNews(this.$route.params.newsSlug)
 				else
@@ -109,6 +111,7 @@
 			}
 		},
 		beforeMount() {
+			this.loaded = false
 			if (this.$route.params.newsSlug)
 				this.fetchNews(this.$route.params.newsSlug)
 			else

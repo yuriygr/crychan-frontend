@@ -8,18 +8,18 @@
 				<span class="name">{{ thread.name }}</span>
 				<span class="time">{{ thread.time }}</span>
 				<span class="link">{{ thread.id }}</span>
-				<span class="open">
+				<span class="open" v-if="!open">
 					<router-link :to="{ name: 'thread', params: { boardSlug: thread.board, threadId: thread.id } }">[Open]</router-link>
 				</span>
 			</div>
 			<div class="post-text" v-html="thread.text"></div>
 		</div>
-		<div class="omitted" v-if="hasOmitted()">
+		<div class="omitted" v-if="hasOmitted() && !open">
 			{{ getOmitted() }}
 			<a href="#">Expand</a>
 		</div>
 		<div class="clear"></div>
-		<div class="post-replys" v-if="thread.replys.length > 0">
+		<div class="thread-replys" v-if="thread.replys.length > 0">
 			<slot></slot>
 		</div>
 		<hr>
@@ -29,7 +29,7 @@
 <script>
 	export default {
 		name: 'thread',
-		props: ['thread'],
+		props: ['thread', 'open'],
 		methods: {
 			hasOmitted() {
 				return this.thread.count_replys > 3

@@ -63,7 +63,6 @@ header {
 	color: #aaa;
 	margin-bottom: 1em;
 	z-index: 6000;
-	box-shadow: inset 0 2px 0px #e86b09;
 }
 .header__links { display: inline-block; }
 .header__links li {
@@ -450,10 +449,6 @@ textarea:hover, textarea:focus {background-color: #fefefe;border-color: #CACACA;
 @media screen and (max-width: 725px) {
 	.warp {margin: 0 10px; }
 
-	.index-logo { font-size: 55px; width: 190px; }
-	.index-info { font-size: 25px; }
-
-	.page { font-size: .85em; }
 
 	.board-add { width: 100%; }
 	.board-panel { display: none; }
@@ -463,7 +458,7 @@ textarea:hover, textarea:focus {background-color: #fefefe;border-color: #CACACA;
 	#shampoo { height: 100px; }
 	.subject { display: block; font-size: 16px; }
 
-	.post { margin: 1px 0; width: 100%; }
+	.post { display: block; }
 	.post-file { display: block; float: none; }
 	.post-file a img { max-width: 130px; }
 }

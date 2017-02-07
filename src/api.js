@@ -20,6 +20,13 @@ const board = {
 			const {response} = JSON.parse(data.request.response)
 			return response
 		})
+	},
+	getThread(board_slug, thread_id) {
+		return instance.get('board.getThread', { params: { slug: board_slug, id: thread_id }})
+		.then((data) => {
+			const {response} = JSON.parse(data.request.response)
+			return response
+		})
 	}
 }
 

@@ -1,11 +1,11 @@
 <template>
-	<section class="content" v-if="loaded">
+	<section class="content">
+		<loading :show="!loaded"></loading>
 		<div class="warp">
 			<h1 v-html="pageTitle"></h1>
 			<div v-html="activePage.text"></div>
 		</div>
 	</section>
-	<loading :show="loaded" v-else></loading>
 </template>
 
 <script>
@@ -56,10 +56,12 @@
 		},
 		watch: {
 			$route() {
+				this.loaded = false
 				this.fetchPage(this.$route.params.pageSlug)
 			}
 		},
 		beforeMount() {
+			this.loaded = false
 			this.fetchPage(this.$route.params.pageSlug)
 		}
 	}

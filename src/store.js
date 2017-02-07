@@ -64,8 +64,8 @@ const actions = {
 	},
 	FETCH_BOARD_THREAD ({ commit }, [board_slug, thread_id]) {
 		return api.board.getThread(board_slug, thread_id)
-		.then((board_data) => {
-			commit('SET_THREAD_ACTIVE', { board_data, thread_id })
+		.then((thread_data) => {
+			commit('SET_THREAD_ACTIVE', { thread_data, thread_id })
 		})
 	},
 	// PAGE

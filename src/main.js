@@ -11,7 +11,7 @@ import store from './store'
 // some styles
 import 'reset-css/reset.css'
 import 'assets/style.css'
- 
+
 // use Google Analytcs tracking 
 const id = 'UA-56787403-2' 
 Vue.use(VueAnalytics, { id, router })

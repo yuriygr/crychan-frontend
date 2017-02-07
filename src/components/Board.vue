@@ -1,5 +1,6 @@
 <template>
-	<section class="content" v-if="loaded">
+	<section class="content">
+		<loading :show="!loaded"></loading>
 		<div class="warp">
 			<div v-if="activeBoard">
 				<div class="board-name">
@@ -8,7 +9,7 @@
 				</div>
 				<hr>
 				<div class="board-content" v-if="activeBoard.threads.items.length > 0">
-					<thread v-for="thread in activeBoard.threads.items" key="thread.id" :thread="thread">
+					<thread v-for="thread in activeBoard.threads.items" key="thread.id" :thread="thread" :open="false">
 						<post v-for="post in thread.replys" key="post.id" :post="post"></post>
 					</thread>
 					<pagination
@@ -24,9 +25,21 @@
 					<p>Удивительно, но такое возможно. Ты можешь исравить ситуацию создав первый тред. Слови GET 1.</p>
 				</div>
 			</div>
+
+			<div v-if="activeThread">
+				<div class="board-name">
+					<router-link :to="{ name: 'board', params: { boardSlug: activeThread.slug } }">{{ pageTitle }}</router-link>
+					<span class="board-desc" v-if="activeThread.description"> - {{ activeThread.description }}</span>
+				</div>
+				<hr>
+				<div class="board-content">
+					<thread key="activeThread.thread.id" :thread="activeThread.thread" :open="true">
+						<post v-for="post in activeThread.thread.replys" key="post.id" :post="post"></post>
+					</thread>
+				</div>
+			</div>
 		</div>
 	</section>
-	<loading :show="loaded" v-else></loading>
 </template>
 
 <script>
@@ -79,16 +92,44 @@
 					this.loaded = true
 				})
 			},
+			fetchThread(boardSlug, threadId) {
+				this.FETCH_BOARD_THREAD([boardSlug, threadId])
+				.then(() => {
+					// Set content and status
+					this.activeThread = this.$store.state.appThreadActive
+					this.activeBoard = false
+					this.pageTitle = '/'+ this.activeThread.slug + '/ - ' + this.activeThread.name
+					this.loaded = true
+					// Change header
+					this.$emit('updateHead')
+				})
+				.catch((error, status) => {
+					// Redirect to 404
+					this.$router.push({ name: 'not-found' })
+					// Set content and status
+					this.activeThread = false
+					this.loaded = true
+				})
+			},
 			...mapActions([
+				'FETCH_BOARD_THREAD',
 				'FETCH_BOARD'
 			])
 		},
 		watch: {
 			$route() {
-				this.fetchThreadsList(this.$route.params.boardSlug, this.$route.query.page)
+				this.loaded = false
+				if (this.$route.params.threadId)
+					this.fetchThread(this.$route.params.boardSlug, this.$route.params.threadId)
+				else
+					this.fetchThreadsList(this.$route.params.boardSlug, this.$route.query.page)
 			}
 		},
 		beforeMount() {
+			this.loaded = false
+			if (this.$route.params.threadId)
+				this.fetchThread(this.$route.params.boardSlug, this.$route.params.threadId)
+			else
 				this.fetchThreadsList(this.$route.params.boardSlug, this.$route.query.page)
 		}
 	}
