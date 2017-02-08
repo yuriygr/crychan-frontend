@@ -1,13 +1,15 @@
 <template>
 	<div class="thread-box">
-		<div class="post thread">
+		<div class="post thread" :id="thread.id">
 			<div class="post-info">
 				<span class="nyan nyan-locked" title="Locked" v-if="thread.isLocked"></span>
 				<span class="nyan nyan-sticky" title="Sticky" v-if="thread.isSticky"></span>
 				<span class="subject" v-if="thread.subject">{{ thread.subject }}</span>
 				<span class="name">{{ thread.name }}</span>
 				<span class="time">{{ thread.time }}</span>
-				<span class="link">{{ thread.id }}</span>
+				<span class="link">
+					<router-link :to="{ name: 'thread', params: { boardSlug: thread.board, threadId: thread.id } }">#{{ thread.id }}</router-link>
+				</span>
 				<span class="open" v-if="!open">
 					<router-link :to="{ name: 'thread', params: { boardSlug: thread.board, threadId: thread.id } }">[Open]</router-link>
 				</span>
@@ -18,7 +20,6 @@
 			{{ getOmitted() }}
 			<a href="#">Expand</a>
 		</div>
-		<div class="clear"></div>
 		<div class="thread-replys" v-if="thread.replys.length > 0">
 			<slot></slot>
 		</div>

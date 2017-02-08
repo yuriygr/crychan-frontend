@@ -24,29 +24,27 @@
 				loaded: false,
 			}
 		},
-		head: {
-			title() {
-				return {
-					inner: this.pageTitle || 'Loading...'
-				}
+		metaInfo() {
+			return {
+				title: this.pageTitle || 'Loading...'
 			}
 		},
 		methods: {
 			fetchPage(pageSlug) {
+				this.loaded = false
 				this.FETCH_PAGE(pageSlug)
 				.then(() => {
 					// Set content and status
 					this.activePage = this.$store.state.appPageActive
 					this.pageTitle = this.activePage.name
-					this.loaded = true
-					// Change header
-					this.$emit('updateHead')
 				})
 				.catch((error, status) => {
 					// Redirect to 404
 					this.$router.push({ name: 'not-found' })
 					// Set content and status
 					this.activePage = false
+				})
+				.then(() => {
 					this.loaded = true
 				})
 			},
@@ -56,12 +54,10 @@
 		},
 		watch: {
 			$route() {
-				this.loaded = false
 				this.fetchPage(this.$route.params.pageSlug)
 			}
 		},
 		beforeMount() {
-			this.loaded = false
 			this.fetchPage(this.$route.params.pageSlug)
 		}
 	}

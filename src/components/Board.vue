@@ -3,10 +3,9 @@
 		<loading :show="!loaded"></loading>
 		<div class="warp">
 			<div v-if="activeBoard">
-				<div class="board-name">
-					<router-link :to="{ name: 'board', params: { boardSlug: activeBoard.slug } }">{{ pageTitle }}</router-link>
-					<span class="board-desc" v-if="activeBoard.description"> - {{ activeBoard.description }}</span>
-				</div>
+				<h4 class="board-name">
+					<router-link :to="{ name: 'board', params: { boardSlug: activeBoard.slug } }" :title="activeBoard.description">{{ pageTitle }}</router-link>
+				</h4>
 				<hr>
 				<div class="board-content" v-if="activeBoard.threads.items.length > 0">
 					<thread v-for="thread in activeBoard.threads.items" key="thread.id" :thread="thread" :open="false">
@@ -27,10 +26,9 @@
 			</div>
 
 			<div v-if="activeThread">
-				<div class="board-name">
-					<router-link :to="{ name: 'board', params: { boardSlug: activeThread.slug } }">{{ pageTitle }}</router-link>
-					<span class="board-desc" v-if="activeThread.description"> - {{ activeThread.description }}</span>
-				</div>
+				<h4 class="board-name">
+					<router-link :to="{ name: 'board', params: { boardSlug: activeThread.slug } }" :title="activeThread.description">{{ pageTitle }}</router-link>
+				</h4>
 				<hr>
 				<div class="board-content">
 					<thread key="activeThread.thread.id" :thread="activeThread.thread" :open="true">
@@ -65,49 +63,47 @@
 				loaded: false,
 			}
 		},
-		head: {
-			title() {
-				return {
-					inner: this.pageTitle || 'Loading...'
-				}
+		metaInfo() {
+			return {
+				title: this.pageTitle || 'Loading...'
 			}
 		},
 		methods: {
 			fetchThreadsList(boardSlug, currentPage) {
+				this.loaded = false
 				this.FETCH_BOARD([boardSlug, currentPage])
 				.then(() => {
 					// Set content and status
 					this.activeBoard = this.$store.state.appBoardActive
 					this.activeThread = false
-					this.pageTitle = '/'+ this.activeBoard.slug + '/ - ' + this.activeBoard.name
-					this.loaded = true
-					// Change header
-					this.$emit('updateHead')
+					this.pageTitle = '/' + this.activeBoard.slug + '/ - ' + this.activeBoard.name
 				})
 				.catch((error, status) => {
 					// Redirect to 404
 					this.$router.push({ name: 'not-found' })
 					// Set content and status
 					this.activeBoard = false
+				})
+				.then(() => {
 					this.loaded = true
 				})
 			},
 			fetchThread(boardSlug, threadId) {
+				this.loaded = false
 				this.FETCH_BOARD_THREAD([boardSlug, threadId])
 				.then(() => {
 					// Set content and status
 					this.activeThread = this.$store.state.appThreadActive
 					this.activeBoard = false
-					this.pageTitle = '/'+ this.activeThread.slug + '/ - ' + this.activeThread.name
-					this.loaded = true
-					// Change header
-					this.$emit('updateHead')
+					this.pageTitle = '/' + this.activeThread.slug + '/ - ' + this.activeThread.name
 				})
 				.catch((error, status) => {
 					// Redirect to 404
 					this.$router.push({ name: 'not-found' })
 					// Set content and status
 					this.activeThread = false
+				})
+				.then(() => {
 					this.loaded = true
 				})
 			},
@@ -118,7 +114,6 @@
 		},
 		watch: {
 			$route() {
-				this.loaded = false
 				if (this.$route.params.threadId)
 					this.fetchThread(this.$route.params.boardSlug, this.$route.params.threadId)
 				else
@@ -126,7 +121,6 @@
 			}
 		},
 		beforeMount() {
-			this.loaded = false
 			if (this.$route.params.threadId)
 				this.fetchThread(this.$route.params.boardSlug, this.$route.params.threadId)
 			else

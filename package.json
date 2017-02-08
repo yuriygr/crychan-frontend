@@ -12,7 +12,7 @@
     "es6-promise": "^4.0.5",
     "vue": "^2.1.0",
     "vue-analytics": "^2.1.0",
-    "vue-head": "^2.0.10",
+    "vue-meta": "^0.5.3",
     "vue-router": "^2.1.1",
     "vuex": "^2.1.1",
     "vuex-router-sync": "^4.1.1"

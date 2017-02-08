@@ -1,7 +1,8 @@
 import Vue from 'vue'
-import VueHead from 'vue-head'
 import VueAnalytics from 'vue-analytics'
+import Meta from 'vue-meta'
 import { sync } from 'vuex-router-sync'
+
 
 import App from './components/App'
 
@@ -16,10 +17,8 @@ import 'assets/style.css'
 const id = 'UA-56787403-2' 
 Vue.use(VueAnalytics, { id, router })
 
-// use VueHead
-// and set default title separator
-const separator = '-'
-Vue.use(VueHead, { separator })
+// use VueMeta
+Vue.use(Meta)
 
 // sync the router with the vuex store.
 // this registers `store.state.route`

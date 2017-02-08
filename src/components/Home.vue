@@ -13,6 +13,11 @@
 
 	export default {
 		name: 'app-home',
+		metaInfo() {
+			return {
+				title: this.appName
+			}
+		},
 		computed: {
 			...mapState([
 				'appName',

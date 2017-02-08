@@ -11,6 +11,7 @@ Vue.use(VueRouter)
 
 const routes = [
 	{ path: '/', name: 'home', component: Home },
+	{ path: '/not-found', name: 'not-found', component: NotFound },
 	{ path: '/page/:pageSlug', name: 'page', component: Page },
 	{ path: '/news/', name: 'news', component: News , children: [
 		{ path: ':newsSlug', name: 'news-item', component: News },
@@ -18,14 +19,21 @@ const routes = [
 	{ path: '/:boardSlug/', name: 'board', component: Board, children: [
 		{ path: 'thread/:threadId', name: 'thread', component: Board },
 	]},
-	{ path: '/not-found', name: 'not-found', component: NotFound },
 	{ path: '*', redirect: 'not-found' }
 ]
 
 const router = new VueRouter({
 	routes,
 	mode: 'history',
-	scrollBehavior: () => ({ y: 0 })
+	scrollBehavior (to, from, savedPosition) {
+		if (to.hash)
+			return { selector: to.hash }
+
+		if (savedPosition)
+			return savedPosition
+
+		return { x: 0, y: 0 }
+	}
 })
 
 export default router

@@ -15,11 +15,9 @@
 				
 			}
 		},
-		head: {
-			title() {
-				return {
-					inner: 'Not Found'
-				}
+		metaInfo() {
+			return {
+				title: this.pageTitle || 'Loading...'
 			}
 		},
 	}
