@@ -1,7 +1,7 @@
 <template>
 	<section class="content">
 		<div class="warp">
-			<h1>Not Found</h1>
+			<h1 v-html="pageTitle"></h1>
 			<p>The requested page can not be displayed because of the lack thereof</p>
 		</div>
 	</section>
@@ -10,9 +10,9 @@
 <script>
 	export default {
 		name: 'not-found',
-		data () {
+		data() {
 			return {
-				
+				pageTitle: 'Not found'
 			}
 		},
 		metaInfo() {

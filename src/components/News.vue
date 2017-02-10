@@ -57,41 +57,31 @@
 		},
 		methods: {
 			fetchNewsList(currentPage) {
-				this.loaded = false
 				this.FETCH_NEWS_LIST(currentPage)
 				.then(() => {
 					// Set content and status
 					this.listNews = this.$store.state.appNewsList
 					this.activeNews = false
 					this.pageTitle = 'News'
+					this.loaded = true
 				})
-				.catch((error, status) => {
+				.catch((error) => {
 					// Redirect to 404
 					this.$router.push({ name: 'not-found' })
-					// Set content and status
-					this.listNews = false
-				})
-				.then(() => {
-					this.loaded = true
 				})
 			},
 			fetchNews(newsSlug) {
-				this.loaded = false
 				this.FETCH_NEWS(newsSlug)
 				.then(() => {
 					// Set content and status
 					this.activeNews = this.$store.state.appNewsActive
 					this.listNews = false
 					this.pageTitle = this.activeNews.name
+					this.loaded = true
 				})
-				.catch((error, status) => {
+				.catch((error) => {
 					// Redirect to 404
 					this.$router.push({ name: 'not-found' })
-					// Set content and status
-					this.activeNews = false
-				})
-				.then(() => {
-					this.loaded = true
 				})
 			},
 			...mapActions([
@@ -101,6 +91,7 @@
 		},
 		watch: {
 			$route() {
+				this.loaded = false
 				if (this.$route.params.newsSlug)
 					this.fetchNews(this.$route.params.newsSlug)
 				else

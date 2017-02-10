@@ -31,21 +31,16 @@
 		},
 		methods: {
 			fetchPage(pageSlug) {
-				this.loaded = false
 				this.FETCH_PAGE(pageSlug)
 				.then(() => {
 					// Set content and status
 					this.activePage = this.$store.state.appPageActive
 					this.pageTitle = this.activePage.name
+					this.loaded = true
 				})
-				.catch((error, status) => {
+				.catch((error) => {
 					// Redirect to 404
 					this.$router.push({ name: 'not-found' })
-					// Set content and status
-					this.activePage = false
-				})
-				.then(() => {
-					this.loaded = true
 				})
 			},
 			...mapActions([
@@ -54,6 +49,7 @@
 		},
 		watch: {
 			$route() {
+				this.loaded = false
 				this.fetchPage(this.$route.params.pageSlug)
 			}
 		},

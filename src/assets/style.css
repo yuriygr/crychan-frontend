@@ -162,8 +162,8 @@ ul.pagination > li > a.router-link-active {
 /* Post/Thread
  ================================== */
 .post {
-	background: #e6e6e6;
-	border: 1px solid #DDDDDD;
+    background: #DDDDDD;
+    border: solid 1px #CCCCCC;
 	border-radius: 5px;
 	margin: 3px 0px;
 	padding: 4px 8px;
@@ -185,8 +185,6 @@ ul.pagination > li > a.router-link-active {
 .post-info span {
 	margin-right: 4px;
 }
-.post-info a {color: #37474F;border-bottom: none;}
-.post-info a:hover {color: #000;text-decoration: none;}
 /* Posr File */
 .post-file {
 	display: inline-block;

@@ -70,41 +70,31 @@
 		},
 		methods: {
 			fetchThreadsList(boardSlug, currentPage) {
-				this.loaded = false
 				this.FETCH_BOARD([boardSlug, currentPage])
 				.then(() => {
 					// Set content and status
 					this.activeBoard = this.$store.state.appBoardActive
 					this.activeThread = false
 					this.pageTitle = '/' + this.activeBoard.slug + '/ - ' + this.activeBoard.name
+					this.loaded = true
 				})
 				.catch((error, status) => {
 					// Redirect to 404
 					this.$router.push({ name: 'not-found' })
-					// Set content and status
-					this.activeBoard = false
-				})
-				.then(() => {
-					this.loaded = true
 				})
 			},
 			fetchThread(boardSlug, threadId) {
-				this.loaded = false
 				this.FETCH_BOARD_THREAD([boardSlug, threadId])
 				.then(() => {
 					// Set content and status
 					this.activeThread = this.$store.state.appThreadActive
 					this.activeBoard = false
 					this.pageTitle = '/' + this.activeThread.slug + '/ - ' + this.activeThread.name
+					this.loaded = true
 				})
-				.catch((error, status) => {
+				.catch((error) => {
 					// Redirect to 404
 					this.$router.push({ name: 'not-found' })
-					// Set content and status
-					this.activeThread = false
-				})
-				.then(() => {
-					this.loaded = true
 				})
 			},
 			...mapActions([
@@ -114,6 +104,7 @@
 		},
 		watch: {
 			$route() {
+				this.loaded = false
 				if (this.$route.params.threadId)
 					this.fetchThread(this.$route.params.boardSlug, this.$route.params.threadId)
 				else

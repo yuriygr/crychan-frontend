@@ -3,7 +3,7 @@ import axios from 'axios'
 const api = 'https://api.crychan.com/'
 
 const instance = axios.create({
-	baseURL: api
+	baseURL: api,
 });
 
 const board = {

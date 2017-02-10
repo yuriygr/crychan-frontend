@@ -8,17 +8,31 @@
 				<span class="name">{{ thread.name }}</span>
 				<span class="time">{{ thread.time }}</span>
 				<span class="link">
-					<router-link :to="{ name: 'thread', params: { boardSlug: thread.board, threadId: thread.id } }">#{{ thread.id }}</router-link>
+					<router-link :to="{ name: 'thread', params: { boardSlug: thread.board, threadId: thread.id }, hash: '#' + thread.id }">#{{ thread.id }}</router-link>
 				</span>
 				<span class="open" v-if="!open">
-					<router-link :to="{ name: 'thread', params: { boardSlug: thread.board, threadId: thread.id } }">[Open]</router-link>
+					<router-link :to="{ name: 'thread', params: { boardSlug: thread.board, threadId: thread.id } }">Open</router-link>
+				</span>
+				<span class="hide" v-if="!open">
+					<a @click="" href="#">Hide</a>
+				</span>
+				<span class="fave">
+					<a @click="" href="#">Fave</a>
 				</span>
 			</div>
+
+			<div class="post-file left" v-if="thread.files.length > 0">
+				<a v-for="file in thread.files" :href="file.origin" target="_blank">
+					<img :src="file.thumb">
+					<span class="file-info">({{ file.resolution }}) {{ file.type }}</span>
+				</a>
+			</div>
+
 			<div class="post-text" v-html="thread.text"></div>
 		</div>
 		<div class="omitted" v-if="hasOmitted() && !open">
 			{{ getOmitted() }}
-			<a href="#">Expand</a>
+			<a @click="" href="#">Expand</a>
 		</div>
 		<div class="thread-replys" v-if="thread.replys.length > 0">
 			<slot></slot>
