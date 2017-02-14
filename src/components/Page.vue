@@ -40,7 +40,7 @@
 				})
 				.catch((error) => {
 					// Redirect to 404
-					this.$router.push({ name: 'not-found' })
+					this.$router.replace({ name: 'not-found' })
 				})
 			},
 			...mapActions([

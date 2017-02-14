@@ -10,7 +10,12 @@ Gray text #ECEFF1;
 
 /* Staff
  ================================== */
- html, body {
+* {
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+html, body {
 	background-color: #EDEDED;
 	color: #37474F;
 	font-family: 'Avenir', Helvetica, Arial, sans-serif;
@@ -96,6 +101,68 @@ footer {
 
 
 
+/* Board add post */
+.neon-form {
+	width: 500px;
+	border-radius: 5px;
+	padding: 0 5px;
+	background: rgba(0, 0, 0, 0.69);
+	border: 1px solid #494949;
+	z-index: 6000;
+	position: fixed;
+	bottom: 5px;
+	right: 5px;
+}
+.neon-form > form > .header {
+	display: block;
+	font-size: 13px;
+	color: #AAA;
+	text-align: center;
+	padding: 5px;
+	cursor: move;
+}
+.neon-form > form > .header > .close {
+	cursor: pointer;
+	float: right;
+}
+.neon-form input,
+.neon-form textarea {
+	background-color: #404040;
+	color: #f5f5f5;
+	border: 1px solid #393939;
+}
+.neon-form input:hover,
+.neon-form input:focus,
+.neon-form textarea:focus,
+.neon-form textarea:hover {
+	background-color: #444;
+	color: #f5f5f5;
+	border: 1px solid #393939;
+}
+.neon-form #subject { width: 353px; }
+.neon-form #submit { width: 130px; }
+
+
+
+/* Form control
+ ================================== */
+.form .form-group {
+	margin: 5px 0;
+}
+.form .label {
+	display: block;
+	margin: 5px 0;
+	font-weight: bold;
+	font-size: 17px;
+}
+.form .form-info {
+	color: #AAA;
+	font-size: 13px;
+	margin: 5px 0;
+}
+
+
+
 /**
  * Pagination
  */
@@ -132,17 +199,7 @@ ul.pagination > li > a.router-link-active {
 .board-nav span {
 	margin-right: 5px;
 }
-/* Board add post */
-.board-add {
-	width: 600px;
-	margin: 10px auto;
-	border-radius: 5px;
-	padding: 0 5px;
-	background: #e6e6e6;
-	border: 1px solid #DDDDDD;
-}
-.board-add #kasumi { width: 453px; }
-.board-add #submit { width: 130px; }
+
 
 .board-panel {
 	background: rgb(230, 230, 230);
@@ -162,8 +219,8 @@ ul.pagination > li > a.router-link-active {
 /* Post/Thread
  ================================== */
 .post {
-    background: #DDDDDD;
-    border: solid 1px #CCCCCC;
+	background: #e6e6e6;
+	border: 1px solid #DDDDDD;
 	border-radius: 5px;
 	margin: 3px 0px;
 	padding: 4px 8px;
@@ -220,28 +277,6 @@ ul.pagination > li > a.router-link-active {
 	font-size: 1rem;
 	font-weight: bold;
 }
-.tripcode {
-	color: #B94A48;
-}
-/* nayn */
-.nyan {
-	display: inline-block;
-	width: 8px;
-	height: 8px;
-	border-radius: 50%;
-}
-.nyan.nyan-sage {
-	background: #B94A48;
-}
-.nyan.nyan-locked {
-	background: #B94A48;
-}
-.nyan.nyan-sticky {
-	background: #c5c11c;
-}
-.nyan.nyan-hide {
-	background: #1C9BC5;
-}
 .omitted {
 	color: #AAA;
 	font-size: 13px;
@@ -263,29 +298,6 @@ pre {
 	border-radius: 5px;
 	white-space: pre;
 	font-size: 11px;
-}
-
-
-/* Form control
- ================================== */
-.form .form-name {
-	display: inline-block;
-	font-size: 13px;
-	color: #666;
-}
-.form .form-group {
-	margin: 5px 0;
-}
-.form .label {
-	display: block;
-	margin: 5px 0;
-	font-weight: bold;
-	font-size: 17px;
-}
-.form .form-info {
-	color: #AAA;
-	font-size: 13px;
-	margin: 5px 0;
 }
 
 
@@ -447,13 +459,19 @@ textarea:hover, textarea:focus {background-color: #fefefe;border-color: #CACACA;
 @media screen and (max-width: 725px) {
 	.warp {margin: 0 10px; }
 
-
 	.board-add { width: 100%; }
 	.board-panel { display: none; }
 
-	#kasumi { width: 100%!important; }
-	#submit { width: 100%!important; margin: 4px 0 0 0; }
-	#shampoo { height: 100px; }
+	.neon-form {
+	    width: 100%;
+	    right: 0;
+	    left: 0;
+	    bottom: 0;
+	}
+	.neon-form #subject { width: 100%!important; }
+	.neon-form #submit { width: 100%!important; margin: 4px 0 0 0; }
+	.neon-form #message { height: 100px; }
+
 	.subject { display: block; font-size: 16px; }
 
 	.post { display: block; }

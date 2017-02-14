@@ -8,7 +8,7 @@
 				</h4>
 				<hr>
 				<div class="board-content" v-if="activeBoard.threads.items.length > 0">
-					<thread v-for="thread in activeBoard.threads.items" key="thread.id" :thread="thread" :open="false">
+					<thread v-for="thread in activeBoard.threads.items" key="thread.id" :thread="thread" :replyLimit="activeBoard.reply_limit" :open="false">
 						<post v-for="post in thread.replys" key="post.id" :post="post"></post>
 					</thread>
 					<pagination
@@ -34,8 +34,14 @@
 					<thread key="activeThread.thread.id" :thread="activeThread.thread" :open="true">
 						<post v-for="post in activeThread.thread.replys" key="post.id" :post="post"></post>
 					</thread>
+					<div class="thread-nav">
+						<router-link :to="{ name: 'board', params: { boardSlug: activeThread.slug } }" class="btn">Return</router-link>
+						<a href="#" class="btn" @click="refreshThread(activeThread, $event)">Refresh thread</a>
+						<a href="#" class="btn" @click="scrollUp()">Scroll up</a>
+					</div>
 				</div>
 			</div>
+			<neon-form :board="replyed.board" :thread="replyed.thread" v-show="replyed.open"></neon-form>
 		</div>
 	</section>
 </template>
@@ -45,6 +51,7 @@
 	import Loading from './common/Loading'
 	import Thread from './common/Thread'
 	import Post from './common/Post'
+	import NeonForm from './common/NeonForm'
 	import Pagination from './common/Pagination'
 
 	export default {
@@ -53,6 +60,7 @@
 			Loading,
 			Thread,
 			Post,
+			NeonForm,
 			Pagination
 		},
 		data() {
@@ -61,6 +69,12 @@
 				activeThread: false,
 				pageTitle: '',
 				loaded: false,
+
+				replyed: {
+					open: false,
+					board: '',
+					thread: ''
+				}
 			}
 		},
 		metaInfo() {
@@ -70,17 +84,21 @@
 		},
 		methods: {
 			fetchThreadsList(boardSlug, currentPage) {
-				this.FETCH_BOARD([boardSlug, currentPage])
+				this.FETCH_BOARD_THREADS([boardSlug, currentPage])
 				.then(() => {
 					// Set content and status
 					this.activeBoard = this.$store.state.appBoardActive
 					this.activeThread = false
+					// Form
+					this.replyed.board = this.activeBoard.slug
+					this.replyed.thread = 0
+					// Windows title
 					this.pageTitle = '/' + this.activeBoard.slug + '/ - ' + this.activeBoard.name
 					this.loaded = true
 				})
 				.catch((error, status) => {
 					// Redirect to 404
-					this.$router.push({ name: 'not-found' })
+					this.$router.replace({ name: 'not-found' })
 				})
 			},
 			fetchThread(boardSlug, threadId) {
@@ -89,17 +107,36 @@
 					// Set content and status
 					this.activeThread = this.$store.state.appThreadActive
 					this.activeBoard = false
+					// Form
+					this.replyed.board = this.activeThread.slug
+					this.replyed.thread = this.activeThread.thread.id
+					// Windows title
 					this.pageTitle = '/' + this.activeThread.slug + '/ - ' + this.activeThread.name
 					this.loaded = true
 				})
 				.catch((error) => {
 					// Redirect to 404
-					this.$router.push({ name: 'not-found' })
+					this.$router.replace({ name: 'not-found' })
+				})
+			},
+			refreshThread(activeThread, event) {
+				event.preventDefault()
+
+				let boardSlug = activeThread.slug,
+					threadId = activeThread.thread.id,
+					postId = activeThread.thread.replys[activeThread.thread.replys.length - 1].id
+
+				this.REFRESH_BOARD_THREAD([boardSlug, threadId, postId])
+				.then(() => {
+					console.log('НА НАХУЙ!')
+				})
+				.catch((error) => {
 				})
 			},
 			...mapActions([
+				'REFRESH_BOARD_THREAD',
 				'FETCH_BOARD_THREAD',
-				'FETCH_BOARD'
+				'FETCH_BOARD_THREADS'
 			])
 		},
 		watch: {

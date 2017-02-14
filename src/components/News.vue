@@ -67,7 +67,7 @@
 				})
 				.catch((error) => {
 					// Redirect to 404
-					this.$router.push({ name: 'not-found' })
+					this.$router.replace({ name: 'not-found' })
 				})
 			},
 			fetchNews(newsSlug) {
@@ -81,7 +81,7 @@
 				})
 				.catch((error) => {
 					// Redirect to 404
-					this.$router.push({ name: 'not-found' })
+					this.$router.replace({ name: 'not-found' })
 				})
 			},
 			...mapActions([

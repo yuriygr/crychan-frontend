@@ -32,6 +32,9 @@ const mutations = {
 	SET_THREAD_ACTIVE (state, payload) {
 		state.appThreadActive = payload.thread_data
 	},
+	REFRESH_THREAD_ACTIVE (state, payload) {
+		state.appThreadActive.thread.replys.push(...payload.replys_data)
+	},
 	// PAGE
 	SET_PAGES_LIST (state, payload) {
 		state.appPagesList = payload.pages_list
@@ -56,8 +59,8 @@ const actions = {
 			commit('SET_BOARDS_LIST', { boards_list })
 		})
 	},
-	FETCH_BOARD ({ commit }, [board_slug, current_page]) {
-		return api.board.getItem(board_slug, current_page)
+	FETCH_BOARD_THREADS ({ commit }, [board_slug, page]) {
+		return api.board.getItem(board_slug, page)
 		.then((board_data) => {
 			commit('SET_BOARD_ACTIVE', { board_data })
 		})
@@ -65,7 +68,13 @@ const actions = {
 	FETCH_BOARD_THREAD ({ commit }, [board_slug, thread_id]) {
 		return api.board.getThread(board_slug, thread_id)
 		.then((thread_data) => {
-			commit('SET_THREAD_ACTIVE', { thread_data, thread_id })
+			commit('SET_THREAD_ACTIVE', { thread_data })
+		})
+	},
+	REFRESH_BOARD_THREAD ({ commit }, [board_slug, thread_id, post_id]) {
+		return api.board.refreshThread(board_slug, thread_id, post_id)
+		.then((replys_data) => {
+			commit('REFRESH_THREAD_ACTIVE', { replys_data })
 		})
 	},
 	// PAGE
@@ -82,8 +91,8 @@ const actions = {
 		})
 	},
 	// NEWS
-	FETCH_NEWS_LIST ({ commit }, current_page) {
-		return api.news.getList(current_page)
+	FETCH_NEWS_LIST ({ commit }, page) {
+		return api.news.getList(page)
 		.then((news_list) => {
 			commit('SET_NEWS_LIST', { news_list })
 		})

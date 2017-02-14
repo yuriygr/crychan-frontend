@@ -2,7 +2,7 @@
 	<div class="post-box">
 		<div class="post" :id="post.id">
 			<div class="post-info">
-				<span class="nyan nyan-sage" title="Sage" v-if="post.isSage"></span>
+				<span class="sage" v-if="post.isSage">Sage</span>
 				<span class="subject" v-if="post.subject">{{ post.subject }}</span>
 				<span class="name">{{ post.name }}</span>
 				<span class="time">{{ post.time }}</span>

@@ -14,6 +14,9 @@
 					<router-link :to="{ name: 'page', params: { pageSlug: page.slug } }" exact>{{ page.name }}</router-link>
 				</li>
 				<li>
+					<a @click="" href="#">Settings</a>
+				</li>
+				<li>
 					<router-link :to="{ name: 'news' }">News</router-link>
 				</li>
 			</ul>

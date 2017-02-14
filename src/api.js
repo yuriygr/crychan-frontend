@@ -14,15 +14,22 @@ const board = {
 			return response
 		})
 	},
-	getItem(board_slug, current_page) {
-		return instance.get('board.getItem', { params: { slug: board_slug, page: current_page }})
+	getItem(board_slug, page) {
+		return instance.get('board.getItem', { params: { board_slug: board_slug, page: page }})
 		.then((data) => {
 			const {response} = JSON.parse(data.request.response)
 			return response
 		})
 	},
 	getThread(board_slug, thread_id) {
-		return instance.get('board.getThread', { params: { slug: board_slug, id: thread_id }})
+		return instance.get('board.getThread', { params: { board_slug: board_slug, thread_id: thread_id }})
+		.then((data) => {
+			const {response} = JSON.parse(data.request.response)
+			return response
+		})
+	},
+	refreshThread(board_slug, thread_id, after) {
+		return instance.get('board.refreshThread', { params: { board_slug: board_slug, thread_id: thread_id, after: after }})
 		.then((data) => {
 			const {response} = JSON.parse(data.request.response)
 			return response
@@ -39,7 +46,7 @@ const pages = {
 		})
 	},
 	getItem(page_slug) {
-		return instance.get('pages.getItem', { params: { slug: page_slug }})
+		return instance.get('pages.getItem', { params: { page_slug: page_slug }})
 		.then((data) => {
 			const {response} = JSON.parse(data.request.response)
 			return response
@@ -48,15 +55,15 @@ const pages = {
 }
 
 const news = {
-	getList(current_page) {
-		return instance.get('news.getList', { params: { page: current_page }})
+	getList(page) {
+		return instance.get('news.getList', { params: { page: page }})
 		.then((data) => {
 			const {response} = JSON.parse(data.request.response)
 			return response
 		})
 	},
 	getItem(news_slug) {
-		return instance.get('news.getItem', { params: { slug: news_slug }})
+		return instance.get('news.getItem', { params: { news_slug: news_slug }})
 		.then((data) => {
 			const {response} = JSON.parse(data.request.response)
 			return response

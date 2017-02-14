@@ -16,7 +16,9 @@ const routes = [
 	{ path: '/news/', name: 'news', component: News , children: [
 		{ path: ':newsSlug', name: 'news-item', component: News },
 	]},
-	{ path: '/:boardSlug/', name: 'board', component: Board, children: [
+	{ path: '/:boardSlug', component: Board, children: [
+		{ path: '', redirect: { name: 'board' } },
+		{ path: '/', name: 'board', component: Board },
 		{ path: 'thread/:threadId', name: 'thread', component: Board },
 	]},
 	{ path: '*', redirect: 'not-found' }

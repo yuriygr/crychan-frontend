@@ -1,13 +1,15 @@
 import Vue from 'vue'
 import VueAnalytics from 'vue-analytics'
+import VueI18n from 'vue-i18n'
 import Meta from 'vue-meta'
 import { sync } from 'vuex-router-sync'
-
 
 import App from './components/App'
 
 import router from './router'
 import store from './store'
+import * as locales from './locales'
+import * as filters from './filters'
 
 // some styles
 import 'reset-css/reset.css'
@@ -19,6 +21,19 @@ Vue.use(VueAnalytics, { id, router })
 
 // use VueMeta
 Vue.use(Meta)
+
+// register global utility filters.
+Object.keys(filters).forEach((key) => {
+	Vue.filter(key, filters[key])
+})
+
+// use locales
+Vue.use(VueI18n)
+
+// set locales
+Object.keys(locales).forEach((lang) => {
+	Vue.locale(lang, locales[lang])
+})
 
 // sync the router with the vuex store.
 // this registers `store.state.route`

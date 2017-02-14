@@ -2,8 +2,8 @@
 	<div class="thread-box">
 		<div class="post thread" :id="thread.id">
 			<div class="post-info">
-				<span class="nyan nyan-locked" title="Locked" v-if="thread.isLocked"></span>
-				<span class="nyan nyan-sticky" title="Sticky" v-if="thread.isSticky"></span>
+				<span class="locked" v-if="thread.isLocked">Locked</span>
+				<span class="sticky" v-if="thread.isSticky">Sticky</span>
 				<span class="subject" v-if="thread.subject">{{ thread.subject }}</span>
 				<span class="name">{{ thread.name }}</span>
 				<span class="time">{{ thread.time }}</span>
@@ -44,13 +44,13 @@
 <script>
 	export default {
 		name: 'thread',
-		props: ['thread', 'open'],
+		props: ['thread', 'open', 'replyLimit'],
 		methods: {
 			hasOmitted() {
-				return this.thread.count_replys > 3
+				return this.thread.count_replys > this.replyLimit
 			},
 			getOmitted() {
-				let count = this.thread.count_replys - 3
+				let count = this.thread.count_replys - this.replyLimit
 				let cases = [2, 0, 1, 1, 1, 2];
 				let titles = ['reply', 'replies', 'replies'];
 				return count + ' ' + titles[ (count%100 > 4 && count%100 < 20) ? 2 : cases[Math.min(count%10, 5)] ] + ' omitted.';
