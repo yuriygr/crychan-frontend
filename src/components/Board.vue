@@ -19,7 +19,7 @@
 						:next="activeBoard.threads.next"
 					></pagination>
 				</div>
-				<div class="board-content" v-else>
+				<div class="board-empty" v-else>
 					<h4>В этом разделе нет тредов</h4>
 					<p>Удивительно, но такое возможно. Ты можешь исравить ситуацию создав первый тред. Слови GET 1.</p>
 				</div>
@@ -41,7 +41,7 @@
 					</div>
 				</div>
 			</div>
-			<neon-form :board="replyed.board" :thread="replyed.thread" v-show="replyed.open"></neon-form>
+			<neon-form :board="replyed.board" :thread="replyed.thread"></neon-form>
 		</div>
 	</section>
 </template>
@@ -71,7 +71,6 @@
 				loaded: false,
 
 				replyed: {
-					open: false,
 					board: '',
 					thread: ''
 				}

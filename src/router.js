@@ -13,7 +13,7 @@ const routes = [
 	{ path: '/', name: 'home', component: Home },
 	{ path: '/not-found', name: 'not-found', component: NotFound },
 	{ path: '/page/:pageSlug', name: 'page', component: Page },
-	{ path: '/news/', name: 'news', component: News , children: [
+	{ path: '/news/', name: 'news', component: News, children: [
 		{ path: ':newsSlug', name: 'news-item', component: News },
 	]},
 	{ path: '/:boardSlug', component: Board, children: [

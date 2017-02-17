@@ -101,17 +101,24 @@ footer {
 
 
 
-/* Board add post */
+/**
+ * NEON FORM
+ */
 .neon-form {
-	width: 500px;
-	border-radius: 5px;
-	padding: 0 5px;
 	background: rgba(0, 0, 0, 0.69);
 	border: 1px solid #494949;
+	border-radius: 5px;
+	padding: 0 5px;
+	min-width: 400px;
+	max-width: 650px;
 	z-index: 6000;
 	position: fixed;
-	bottom: 5px;
-	right: 5px;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	-webkit-backdrop-filter: saturate(180%) blur(20px);
+	backdrop-filter: saturate(180%) blur(20px);
 }
 .neon-form > form > .header {
 	display: block;
@@ -139,8 +146,7 @@ footer {
 	color: #f5f5f5;
 	border: 1px solid #393939;
 }
-.neon-form #subject { width: 353px; }
-.neon-form #submit { width: 130px; }
+
 
 
 
@@ -362,9 +368,11 @@ textarea {
 	-moz-border-radius: 4px;
 	-o-border-radius: 4px;
 	border-radius: 4px;
-	resize: vertical;
+	resize: both;
 	vertical-align: top;
 	width: 100%;
+	min-width: 100%;
+	max-width: 100%;
 	font-size: 12px;
 }
 textarea:hover, textarea:focus {background-color: #fefefe;border-color: #CACACA;text-decoration: none;}
@@ -459,18 +467,7 @@ textarea:hover, textarea:focus {background-color: #fefefe;border-color: #CACACA;
 @media screen and (max-width: 725px) {
 	.warp {margin: 0 10px; }
 
-	.board-add { width: 100%; }
 	.board-panel { display: none; }
-
-	.neon-form {
-	    width: 100%;
-	    right: 0;
-	    left: 0;
-	    bottom: 0;
-	}
-	.neon-form #subject { width: 100%!important; }
-	.neon-form #submit { width: 100%!important; margin: 4px 0 0 0; }
-	.neon-form #message { height: 100px; }
 
 	.subject { display: block; font-size: 16px; }
 
@@ -478,8 +475,6 @@ textarea:hover, textarea:focus {background-color: #fefefe;border-color: #CACACA;
 	.post-file { display: block; float: none; }
 	.post-file a img { max-width: 130px; }
 }
-
-
 
 
 
