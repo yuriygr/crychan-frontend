@@ -36,8 +36,8 @@
 					</thread>
 					<div class="thread-nav">
 						<router-link :to="{ name: 'board', params: { boardSlug: activeThread.slug } }" class="btn">Return</router-link>
-						<a href="#" class="btn" @click="refreshThread(activeThread, $event)">Refresh thread</a>
-						<a href="#" class="btn" @click="scrollUp()">Scroll up</a>
+						<a href="#" class="btn" @click="refreshThread()" @click.prevent.stop>Refresh thread</a>
+						<a href="#" class="btn" @click="scrollUp()"  @click.prevent.stop>Scroll up</a>
 					</div>
 				</div>
 			</div>
@@ -75,6 +75,12 @@
 					thread: ''
 				}
 			}
+		},
+		ready() {
+			this.$on('form:submit', () => {
+				console.log('ДА ПОШЛО ТЫ НАХУЙ')
+				this.refreshThread()
+			})
 		},
 		metaInfo() {
 			return {
@@ -118,19 +124,27 @@
 					this.$router.replace({ name: 'not-found' })
 				})
 			},
-			refreshThread(activeThread, event) {
-				event.preventDefault()
 
-				let boardSlug = activeThread.slug,
-					threadId = activeThread.thread.id,
-					postId = activeThread.thread.replys[activeThread.thread.replys.length - 1].id
+			refreshThread() {
+				let boardSlug = this.activeThread.slug,
+					threadId = this.activeThread.thread.id,
+					postId = this.activeThread.thread.replys.length > 0
+							? this.activeThread.thread.replys[this.activeThread.thread.replys.length - 1].id
+							: this.activeThread.thread.id
 
 				this.REFRESH_BOARD_THREAD([boardSlug, threadId, postId])
-				.then(() => {
-					console.log('НА НАХУЙ!')
+				.then((replys_data) => {
+					if (replys_data.length > 0 )
+						alert('Новых постов: ' + replys_data.length)
+					else
+						alert('Нет новых постов! Чан, блядь, без постинга. На что ты сука расчитываешь?')
 				})
 				.catch((error) => {
+					alert('Проблемы со стороны сервера')
 				})
+			},
+			scrollUp() {
+				window.scrollTo(0, 0)
 			},
 			...mapActions([
 				'REFRESH_BOARD_THREAD',

@@ -57,24 +57,28 @@ const actions = {
 		return api.board.getList()
 		.then((boards_list) => {
 			commit('SET_BOARDS_LIST', { boards_list })
+			return boards_list
 		})
 	},
 	FETCH_BOARD_THREADS ({ commit }, [board_slug, page]) {
 		return api.board.getItem(board_slug, page)
 		.then((board_data) => {
 			commit('SET_BOARD_ACTIVE', { board_data })
+			return board_data
 		})
 	},
 	FETCH_BOARD_THREAD ({ commit }, [board_slug, thread_id]) {
 		return api.board.getThread(board_slug, thread_id)
 		.then((thread_data) => {
 			commit('SET_THREAD_ACTIVE', { thread_data })
+			return thread_data
 		})
 	},
 	REFRESH_BOARD_THREAD ({ commit }, [board_slug, thread_id, post_id]) {
 		return api.board.refreshThread(board_slug, thread_id, post_id)
 		.then((replys_data) => {
 			commit('REFRESH_THREAD_ACTIVE', { replys_data })
+			return replys_data
 		})
 	},
 	// PAGE

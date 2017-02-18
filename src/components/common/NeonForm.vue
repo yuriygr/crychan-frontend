@@ -27,10 +27,10 @@
 				message: ''
 			}
 		},
-		created() {
+		ready() {
 			this.$on('page:changed', () => {
 				console.log('страница сменилась')
-			});
+			})
 		},
 		methods: {
 			formHandle() {
@@ -38,7 +38,6 @@
 					this.formSubmit()
 				}
 			},
-
 			formSubmit() {
 				var form = document.getElementById('form');
 				let formData = new FormData()
