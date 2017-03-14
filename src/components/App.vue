@@ -7,6 +7,7 @@
 </template>
 
 <script>
+	import { mapActions } from 'vuex'
 	import AppHeader from './common/AppHeader'
 	import AppFooter from './common/AppFooter'
 
@@ -15,6 +16,14 @@
 		components: {
 			AppHeader,
 			AppFooter
+		},
+		methods: {
+			...mapActions([
+				'FETCH_BOARDS_LIST'
+			])
+		},
+		beforeMount() {
+			this.FETCH_BOARDS_LIST()
 		}
 	}
 </script>

@@ -1,15 +1,14 @@
 <template>
 	<section class="content">
-		<loading :show="!loaded"></loading>
 		<div class="warp">
-			<h1 v-html="pageTitle"></h1>
-			<div v-html="activePage.text"></div>
+			<h1 v-html="pageActive.name"></h1>
+			<div v-html="pageActive.text"></div>
 		</div>
+		<loading :show="loading"></loading>
 	</section>
 </template>
 
 <script>
-	import { mapActions } from 'vuex'
 	import Loading from './common/Loading'
 
 	export default {
@@ -19,42 +18,40 @@
 		},
 		data() {
 			return {
-				activePage: false,
-				pageTitle: '',
-				loaded: false,
+				loading: false,
+				pageActive: {},
+				titlePage: 'Loading...'
 			}
 		},
 		metaInfo() {
 			return {
-				title: this.pageTitle || 'Loading...'
+				title: this.titlePage
 			}
 		},
 		methods: {
-			fetchPage(pageSlug) {
-				this.FETCH_PAGE(pageSlug)
+			fetchPage(params) {
+				this.loading = true
+				this.$store.dispatch('FETCH_PAGE', params.pageSlug)
 				.then(() => {
 					// Set content and status
-					this.activePage = this.$store.state.appPageActive
-					this.pageTitle = this.activePage.name
-					this.loaded = true
+					this.pageActive = this.$store.state.pageActive
+					this.titlePage = this.pageActive.name
+					this.loading = false
 				})
 				.catch((error) => {
 					// Redirect to 404
 					this.$router.replace({ name: 'not-found' })
+					return
 				})
-			},
-			...mapActions([
-				'FETCH_PAGE',
-			])
-		},
-		watch: {
-			$route() {
-				this.loaded = false
-				this.fetchPage(this.$route.params.pageSlug)
 			}
 		},
-		beforeMount() {
-			this.fetchPage(this.$route.params.pageSlug)
+		watch: {
+			$route(to) {
+				this.fetchPage(to.params)
+			}
+		},
+		mounted() {
+			this.fetchPage(this.$route.params)
 		}
 	}
 </script>

@@ -7,8 +7,14 @@ var utils = require('./utils')
 var baseWebpackConfig = require('./webpack.base.conf')
 var ExtractTextPlugin = require('extract-text-webpack-plugin')
 var HtmlWebpackPlugin = require('html-webpack-plugin')
+var SWPrecachePlugin = require('sw-precache-webpack-plugin')
 // окружение
 var env = config.build.env
+
+// костыль для PWA
+var srcDir = path.resolve(__dirname, '../').replace(/\\/g, "\/")
+var prefixMulti = {}
+prefixMulti[srcDir] = ''
 
 // Объеденяем конфигурации
 var webpackConfig = merge(baseWebpackConfig, {
@@ -76,6 +82,13 @@ var webpackConfig = merge(baseWebpackConfig, {
     new webpack.optimize.CommonsChunkPlugin({
       name: 'manifest',
       chunks: ['vendor']
+    }),
+    new SWPrecachePlugin({
+      cacheId: 'crychan-vue',
+      filename: 'service-worker.js',
+      stripPrefixMulti: prefixMulti,
+      dontCacheBustUrlsMatching: /./,
+      staticFileGlobsIgnorePatterns: [/index\.html$/, /\.map$/]
     })
   ]
 })

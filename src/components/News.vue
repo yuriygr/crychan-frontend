@@ -1,10 +1,9 @@
 <template>
 	<section class="content">
-		<loading :show="!loaded"></loading>
 		<div class="warp">
-			<div v-if="listNews">
-				<h1 v-html="pageTitle"></h1>
-				<article v-for="news in listNews.items" key="news.id">
+			<template v-if="newsList">
+				<h1 v-html="titlePage"></h1>
+				<article v-for="news in newsList.items" key="news.id">
 					<h4>
 						<router-link :to="{ name: 'news-item', params: { newsSlug: news.slug } }" :title="news.name" exact>{{ news.name }}</router-link>
 					</h4>
@@ -15,24 +14,25 @@
 
 				<pagination
 					:name="'news'"
-					:current="listNews.current"
-					:total="listNews.total_pages"
-					:before="listNews.before"
-					:next="listNews.next"
+					:current="newsList.current"
+					:total="newsList.total_pages"
+					:before="newsList.before"
+					:next="newsList.next"
 				></pagination>
-			</div>
+			</template>
 
-			<article v-if="activeNews">
-				<h1 v-html="pageTitle"></h1>
-				<div v-html="activeNews.content"></div>
-				<div v-html="activeNews.created_at"></div>
+			<article v-if="newsActive">
+				<h1 v-html="titlePage"></h1>
+				<div v-html="newsActive.content"></div>
+				<div v-html="newsActive.created_at"></div>
 			</article>
 		</div>
+		<loading :show="loading"></loading>
 	</section>
 </template>
 
 <script>
-	import { mapActions } from 'vuex'
+	import { mapState } from 'vuex'
 	import Loading from './common/Loading'
 	import Pagination from './common/Pagination'
 
@@ -44,65 +44,76 @@
 		},
 		data() {
 			return {
-				listNews: false,
-				activeNews: false,
-				pageTitle: '',
-				loaded: false,
+				loading: false,
+				titlePage: 'Loading...',
 			}
 		},
 		metaInfo() {
 			return {
-				title: this.pageTitle || 'Loading...'
+				title: this.titlePage
 			}
 		},
-		methods: {
-			fetchNewsList(currentPage) {
-				this.FETCH_NEWS_LIST(currentPage)
-				.then(() => {
-					// Set content and status
-					this.listNews = this.$store.state.appNewsList
-					this.activeNews = false
-					this.pageTitle = 'News'
-					this.loaded = true
-				})
-				.catch((error) => {
-					// Redirect to 404
-					this.$router.replace({ name: 'not-found' })
-				})
-			},
-			fetchNews(newsSlug) {
-				this.FETCH_NEWS(newsSlug)
-				.then(() => {
-					// Set content and status
-					this.activeNews = this.$store.state.appNewsActive
-					this.listNews = false
-					this.pageTitle = this.activeNews.name
-					this.loaded = true
-				})
-				.catch((error) => {
-					// Redirect to 404
-					this.$router.replace({ name: 'not-found' })
-				})
-			},
-			...mapActions([
-				'FETCH_NEWS_LIST',
-				'FETCH_NEWS'
+		computed: {
+			...mapState([
+				'newsList',
+				'newsActive'
 			])
 		},
-		watch: {
-			$route() {
-				this.loaded = false
-				if (this.$route.params.newsSlug)
-					this.fetchNews(this.$route.params.newsSlug)
-				else
-					this.fetchNewsList(this.$route.query.page)
+		methods: {
+			fetchNewsList(query) {
+				this.loading = true
+				this.$store.dispatch('FETCH_NEWS_LIST', query.currentPage)
+				.then(() => {
+					// Windows title
+					this.titlePage = 'News'
+					// Status
+					this.loading = false
+					// Удаляем текущую новость
+					this.$store.commit('REMOVE_NEWS_ACTIVE')
+				})
+				.catch((error) => {
+					// Redirect to 404
+					this.$router.replace({ name: 'not-found' })
+					return
+				})
+			},
+			fetchNews(params) {
+				this.loading = true
+				this.$store.dispatch('FETCH_NEWS', params.newsSlug)
+				.then(() => {
+					// Windows title
+					this.titlePage = this.newsActive.name
+					// Status
+					this.loading = false
+					// Удаляем текущие списки новостей
+					this.$store.commit('REMOVE_NEWS_LIST')
+				})
+				.catch((error) => {
+					// Redirect to 404
+					this.$router.replace({ name: 'not-found' })
+					return
+				})
 			}
 		},
-		beforeMount() {
+		watch: {
+			$route(to) {
+				if (to.params.newsSlug)
+					this.fetchNews(to.params)
+				else
+					this.fetchNewsList(to.query)
+			}
+		},
+		mounted() {
 			if (this.$route.params.newsSlug)
-				this.fetchNews(this.$route.params.newsSlug)
+				this.fetchNews(this.$route.params)
 			else
-				this.fetchNewsList(this.$route.query.page)
+				this.fetchNewsList(this.$route.query)
+		},
+		beforeDestroy() {
+			// Удаляем текущие списки новостей
+			this.$store.commit('REMOVE_NEWS_LIST')
+			// Удаляем текущую новость
+			this.$store.commit('REMOVE_NEWS_ACTIVE')
 		}
 	}
 </script>

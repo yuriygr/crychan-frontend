@@ -6,65 +6,99 @@ import * as api from './api'
 Vue.use(Vuex)
 
 const state = {
-	appLoaded: false,
+	name: 'cryChan',
 
-	appName: 'cryChan',
+	boardActive: false,
+	boardsList: {},
 
-	appBoardsList: [],
-	appBoardActive: [],
-	appThreadActive: [],
+	threadsList: false,
+	threadActive: false,
 
-	appPagesList: [],
-	appPageActive: [],
+	pageActive: false,
 
-	appNewsList: [],
-	appNewsActive: []
+	newsList: false,
+	newsActive: false
 }
 
 const mutations = {
-	// BOAR
+	// Работа с разделами
 	SET_BOARDS_LIST (state, payload) {
-		state.appBoardsList = payload.boards_list
+		payload.boards_data.forEach((board) => {
+			Vue.set(state.boardsList, board.slug, board)
+		})
 	},
 	SET_BOARD_ACTIVE (state, payload) {
-		state.appBoardActive = payload.board_data
+		state.boardActive = payload.board_data
+	},
+	REMOVE_BOARD_ACTIVE (state) {
+		state.boardActive = false
+	},
+
+	// Работа с тредами
+	SET_THREADS_LIST (state, payload) {
+		state.threadsList = payload.threads_data
+	},
+	REMOVE_THREADS_LIST (state) {
+		state.threadsList = false
 	},
 	SET_THREAD_ACTIVE (state, payload) {
-		state.appThreadActive = payload.thread_data
+		state.threadActive = payload.thread_data
 	},
+	REMOVE_THREAD_ACTIVE (state) {
+		state.threadActive = false
+	},
+
 	REFRESH_THREAD_ACTIVE (state, payload) {
-		state.appThreadActive.thread.replys.push(...payload.replys_data)
+		state.threadActive.replys.push(...payload.replys_data)
 	},
-	// PAGE
-	SET_PAGES_LIST (state, payload) {
-		state.appPagesList = payload.pages_list
-	},
+
+	// Заполняем текущую страницу
 	SET_PAGE_ACTIVE (state, payload) {
-		state.appPageActive = payload.page_data
+		state.pageActive = payload.page_data
 	},
-	// NEWS
+	REMOVE_PAGE_ACTIVE (state) {
+		state.pageActive = false
+	},
+
+	// Заполняем список новостей
 	SET_NEWS_LIST (state, payload) {
-		state.appNewsList = payload.news_list
+		state.newsList = payload.news_list
 	},
+	REMOVE_NEWS_LIST (state) {
+		state.newsList = false
+	},
+	// Задаём текущую новость
 	SET_NEWS_ACTIVE (state, payload) {
-		state.appNewsActive = payload.news_data
+		state.newsActive = payload.news_data
+	},
+	REMOVE_NEWS_ACTIVE (state) {
+		state.newsActive = false
 	}
 }
 
 const actions = {
-	// BOARD
+	// Работа с разделами
 	FETCH_BOARDS_LIST ({ commit }) {
 		return api.board.getList()
-		.then((boards_list) => {
-			commit('SET_BOARDS_LIST', { boards_list })
-			return boards_list
+		.then((boards_data) => {
+			commit('SET_BOARDS_LIST', { boards_data })
+			return boards_data
 		})
 	},
-	FETCH_BOARD_THREADS ({ commit }, [board_slug, page]) {
-		return api.board.getItem(board_slug, page)
+	SET_BOARD_ACTIVE ({ commit }, board_slug) {
+		return api.board.getItem(board_slug)
 		.then((board_data) => {
 			commit('SET_BOARD_ACTIVE', { board_data })
 			return board_data
+		})
+	},
+
+	// Работа с тредами
+	FETCH_BOARD_THREADS ({ commit }, [board_slug, page]) {
+		return api.board.getThreads(board_slug, page)
+		.then((threads_data) => {
+			commit('SET_THREADS_LIST', { threads_data })
+			return threads_data
 		})
 	},
 	FETCH_BOARD_THREAD ({ commit }, [board_slug, thread_id]) {
@@ -74,6 +108,7 @@ const actions = {
 			return thread_data
 		})
 	},
+
 	REFRESH_BOARD_THREAD ({ commit }, [board_slug, thread_id, post_id]) {
 		return api.board.refreshThread(board_slug, thread_id, post_id)
 		.then((replys_data) => {
@@ -81,19 +116,15 @@ const actions = {
 			return replys_data
 		})
 	},
-	// PAGE
-	FETCH_PAGES_LIST ({ commit }) {
-		return api.pages.getList()
-		.then((pages_list) => {
-			commit('SET_PAGES_LIST', { pages_list })
-		})
-	},
+
+	// Заполняем текущую страницу в массив
 	FETCH_PAGE ({ commit }, page_slug) {
 		return api.pages.getItem(page_slug)
 		.then((page_data) => {
 			commit('SET_PAGE_ACTIVE', { page_data })
 		})
 	},
+
 	// NEWS
 	FETCH_NEWS_LIST ({ commit }, page) {
 		return api.news.getList(page)
@@ -109,10 +140,22 @@ const actions = {
 	}
 }
 
+const getters = {
+	boardActive (state) {
+	const { boardActive, boardsList } = state
+		if (boardActive) {
+			return boardsList[boardActive]
+		} else {
+			return []
+		}
+	}
+}
+
 const store = new Vuex.Store({
 	state,
 	mutations,
-	actions
+	actions,
+	getters
 })
 
 export default store

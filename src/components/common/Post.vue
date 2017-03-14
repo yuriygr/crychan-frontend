@@ -5,7 +5,7 @@
 				<span class="sage" v-if="post.isSage">Sage</span>
 				<span class="subject" v-if="post.subject">{{ post.subject }}</span>
 				<span class="name">{{ post.name }}</span>
-				<span class="time">{{ post.time }}</span>
+				<span class="time">{{ post.timestamp | timeFormat }}</span>
 				<span class="link">
 					<router-link :to="{ name: 'thread', params: { boardSlug: post.board, threadId: post.parent }, hash: '#' + post.id }">#{{ post.id }}</router-link>
 				</span>

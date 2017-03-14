@@ -2,22 +2,25 @@
 	<header>
 		<div class="warp">
 			<ul class="header__links left">
-				<li v-for="board in appBoardsList" key="board.id">
-					<router-link :to="{ name: 'board', params: { boardSlug: board.slug } }" :title="board.name" exact>{{ board.name }}</router-link>
+				<li v-if="boardActive">
+					<router-link :to="{ name: 'board', params: { boardSlug: boardActive.slug } }">/{{ boardActive.slug }}/ - {{ boardActive.name }}</router-link>
+				</li>
+				<li v-if="newsList || newsActive">
+					News
+				</li>
+				<li v-if="pagesList || pageActive">
+					Page
 				</li>
 			</ul>
 			<ul class="header__links right">
 				<li>
-					<router-link :to="{ name: 'home' }" exact>Home</router-link>
+					<router-link :to="{ name: 'home' }">{{ name }}</router-link>
 				</li>
-				<li v-for="page in appPagesList" key="page.id">
-					<router-link :to="{ name: 'page', params: { pageSlug: page.slug } }" exact>{{ page.name }}</router-link>
-				</li>
-				<li>
-					<a @click="" href="#">Settings</a>
+				<li v-for="(board, index) in boardsList" key="index">
+					<router-link :to="{ name: 'board', params: { boardSlug: board.slug } }" :title="board.name" exact>/{{ board.slug }}/</router-link>
 				</li>
 				<li>
-					<router-link :to="{ name: 'news' }">News</router-link>
+					<router-link :to="{ name: 'news' }">/news/</router-link>
 				</li>
 			</ul>
 			<div class="clear"></div>
@@ -32,20 +35,23 @@
 		name: 'app-header',
 		computed: {
 			...mapState([
-				'appName',
-				'appBoardsList',
-				'appPagesList'
+				'name',
+				'boardsList',
+				'boardActive',
+				'newsList',
+				'newsActive',
+				'pagesList',
+				'pageActive'
 			])
-		},
-		methods: {
-			...mapActions([
-				'FETCH_BOARDS_LIST',
-				'FETCH_PAGES_LIST',
-			])
-		},
-		beforeMount() {
-			this.FETCH_BOARDS_LIST()
-			this.FETCH_PAGES_LIST()
 		}
 	}
 </script>
+
+<style>
+.fade-enter-active, .fade-leave-active {
+	transition: opacity .4s
+}
+.fade-enter, .fade-leave-to {
+	opacity: 0
+}
+</style>

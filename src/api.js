@@ -14,8 +14,15 @@ const board = {
 			return response
 		})
 	},
-	getItem(board_slug, page) {
-		return instance.get('board.getItem', { params: { board_slug: board_slug, page: page }})
+	getItem(board_slug) {
+		return instance.get('board.getItem', { params: { board_slug: board_slug }})
+		.then((data) => {
+			const {response} = JSON.parse(data.request.response)
+			return response
+		})
+	},
+	getThreads(board_slug, page) {
+		return instance.get('board.getThreads', { params: { board_slug: board_slug, page: page }})
 		.then((data) => {
 			const {response} = JSON.parse(data.request.response)
 			return response

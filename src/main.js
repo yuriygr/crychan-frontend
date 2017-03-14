@@ -29,12 +29,12 @@ Object.keys(filters).forEach((key) => {
 })
 
 // use locales
-Vue.use(VueI18n)
+//Vue.use(VueI18n)
 
 // set locales
-Object.keys(locales).forEach((lang) => {
+/*Object.keys(locales).forEach((lang) => {
 	Vue.locale(lang, locales[lang])
-})
+})*/
 
 // set localsotrage 
 Vue.use(VueLocalStorage)

@@ -64,27 +64,20 @@ i { font-style: italic; }
 p { margin: 0 0 10px; }
 
 header {
-	background-color: #EDEDED;
-	color: #aaa;
-	margin-bottom: 1em;
-	z-index: 6000;
+    background-color: #EDEDED;
+    color: #AAA;
+	border-bottom: 1px solid #e6e6e6;
+    padding: 10px 0;
+    margin-bottom: 1em;
+    z-index: 5000;
 }
 .header__links { display: inline-block; }
 .header__links li {
 	display: inline-block;
 	margin-right: .8em;
 }
-.header__links li:last-child{ margin: 0; }
-.header__links li a {
-	display: block;
-	line-height: 38px;
-	transition: color .15s ease;
-	border: none;
-	color: #e86b09;
-}
-.header__links li a.router-link-active {
-	color: #096be8;
-}
+.header__links li:last-child { margin: 0; }
+
 
 section {
 	flex: 1;
@@ -92,13 +85,20 @@ section {
 
 
 footer {
-	font-size: 13px;
-	padding: 10px 0;
+    background-color: #EDEDED;
 	color: #AAA;
 	border-top: 1px solid #e6e6e6;
+	font-size: 13px;
+	padding: 10px 0;
 	margin-top: 1em;
+    z-index: 5000;
 }
-
+.footer__links { display: inline-block; }
+.footer__links li {
+	display: inline-block;
+	margin-right: .8em;
+}
+.footer__links li:last-child { margin: 0; }
 
 
 /**
@@ -111,7 +111,7 @@ footer {
 	padding: 0 5px;
 	min-width: 400px;
 	max-width: 650px;
-	z-index: 6000;
+	z-index: 7000;
 	position: fixed;
 	-webkit-user-select: none;
 	-moz-user-select: none;
@@ -202,25 +202,31 @@ ul.pagination > li > a.router-link-active {
 	color: #AAA;
 }
 /* Board navigation */
+.board-nav {
+    z-index: 6000;
+    position: fixed;
+    bottom: 0;
+    right: 10%;
+}
+.board-nav .block {
+    background: rgba(0, 0, 0, 0.69);
+    border: 1px solid #494949;
+    border-bottom: none;
+    border-radius: 5px 5px 0 0;
+    padding: 5px;
+    display: inline-block;
+}
 .board-nav span {
 	margin-right: 5px;
 }
-
-
-.board-panel {
-	background: rgb(230, 230, 230);
-	border: 1px solid #DDDDDD;
-	border-radius: 5px;
-	position: fixed;
-	bottom: 5px;
-	right: 5px;
-	padding: 4px;
-	z-index: 900;
-	opacity: .6;
+.board-nav span:last-child {
+	margin: 0;
+} 
+.board-nav span a {
+	color: #eee;
+	border-bottom: none;
 }
-.board-panel:hover {
-	opacity: 1;
-}
+
 
 /* Post/Thread
  ================================== */

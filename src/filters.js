@@ -4,9 +4,8 @@ export function timeFormat(timestamp){
 	const year = a.getFullYear();
 	const month = months[a.getMonth()];
 	const date = a.getDate();
-	const hour = a.getHours();
+	const hour = a.getHours() < 10 ? '0' + a.getHours() : a.getHours();
 	const min = a.getMinutes() < 10 ? '0' + a.getMinutes() : a.getMinutes();
-	const sec = a.getSeconds() < 10 ? '0' + a.getSeconds() : a.getSeconds();
-	const time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec ;
+	const time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min;
 	return time;
 }

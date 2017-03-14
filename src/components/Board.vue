@@ -1,53 +1,58 @@
 <template>
 	<section class="content">
-		<loading :show="!loaded"></loading>
 		<div class="warp">
-			<div v-if="activeBoard">
-				<h4 class="board-name">
-					<router-link :to="{ name: 'board', params: { boardSlug: activeBoard.slug } }" :title="activeBoard.description">{{ pageTitle }}</router-link>
-				</h4>
-				<hr>
-				<div class="board-content" v-if="activeBoard.threads.items.length > 0">
-					<thread v-for="thread in activeBoard.threads.items" key="thread.id" :thread="thread" :replyLimit="activeBoard.reply_limit" :open="false">
+			<template v-if="threadsList">
+				<div class="board-content" v-if="threadsList.items.length > 0">
+					<thread v-for="thread in threadsList.items" key="thread.id" :thread="thread" :replyLimit="boardActive.replyLimit" :open="false">
 						<post v-for="post in thread.replys" key="post.id" :post="post"></post>
 					</thread>
 					<pagination
 						:name="'board'"
-						:current="activeBoard.threads.current"
-						:total="activeBoard.threads.total_pages"
-						:before="activeBoard.threads.before"
-						:next="activeBoard.threads.next"
+						:current="threadsList.current"
+						:total="threadsList.total_pages"
+						:before="threadsList.before"
+						:next="threadsList.next"
 					></pagination>
 				</div>
-				<div class="board-empty" v-else>
+				<div class="board-content" v-else>
 					<h4>В этом разделе нет тредов</h4>
 					<p>Удивительно, но такое возможно. Ты можешь исравить ситуацию создав первый тред. Слови GET 1.</p>
 				</div>
-			</div>
-
-			<div v-if="activeThread">
-				<h4 class="board-name">
-					<router-link :to="{ name: 'board', params: { boardSlug: activeThread.slug } }" :title="activeThread.description">{{ pageTitle }}</router-link>
-				</h4>
-				<hr>
-				<div class="board-content">
-					<thread key="activeThread.thread.id" :thread="activeThread.thread" :open="true">
-						<post v-for="post in activeThread.thread.replys" key="post.id" :post="post"></post>
-					</thread>
-					<div class="thread-nav">
-						<router-link :to="{ name: 'board', params: { boardSlug: activeThread.slug } }" class="btn">Return</router-link>
-						<a href="#" class="btn" @click="refreshThread()" @click.prevent.stop>Refresh thread</a>
-						<a href="#" class="btn" @click="scrollUp()"  @click.prevent.stop>Scroll up</a>
+				<div class="board-nav">
+					<div class="block">
+						<span><a href="#" @click="openForm" @click.prevent.stop>Open form</a></span>
+					</div>
+					<div class="block">
+						<span><a href="#" @click="scrollUp"  @click.prevent.stop>Scroll up</a></span>
 					</div>
 				</div>
-			</div>
-			<neon-form :board="replyed.board" :thread="replyed.thread"></neon-form>
+			</template>
+			<template v-if="threadActive">
+				<div class="board-content">
+					<thread key="threadActive.id" :thread="threadActive" :open="true">
+						<post v-for="post in threadActive.replys" key="post.id" :post="post"></post>
+					</thread>
+				</div>
+				<div class="board-nav">
+					<div class="block">
+						<span><router-link :to="{ name: 'board', params: { boardSlug: boardActive.slug } }">Back</router-link></span>
+					</div>
+					<div class="block">
+						<span><a href="#" @click="refreshThread" @click.prevent.stop>Refresh thread</a></span>
+						<span><a href="#" @click="openForm" @click.prevent.stop>Open form</a></span>
+					</div>
+					<div class="block">
+						<span><a href="#" @click="scrollUp"  @click.prevent.stop>Scroll up</a></span>
+					</div>
+				</div>
+			</template>
 		</div>
+		<loading :show="loading"></loading>
 	</section>
 </template>
 
 <script>
-	import { mapActions } from 'vuex'
+	import { mapState } from 'vuex'
 	import Loading from './common/Loading'
 	import Thread from './common/Thread'
 	import Post from './common/Post'
@@ -65,59 +70,79 @@
 		},
 		data() {
 			return {
-				activeBoard: false,
-				activeThread: false,
-				pageTitle: '',
-				loaded: false,
+				loading: false,
+				titlePage: 'Loading...',
 
-				replyed: {
+				formData: {
 					board: '',
 					thread: ''
 				}
 			}
 		},
-		ready() {
+		created() {
 			this.$on('form:submit', () => {
-				console.log('ДА ПОШЛО ТЫ НАХУЙ')
 				this.refreshThread()
+				console.log('Board', 'Form submit')
+			})
+			this.$on('form:close', () => {
+				console.log('Board', 'Form closed')
 			})
 		},
 		metaInfo() {
 			return {
-				title: this.pageTitle || 'Loading...'
+				title: this.titlePage
 			}
 		},
+		computed: {
+			...mapState([
+				'boardActive',
+				'threadsList',
+				'threadActive'
+			])
+		},
 		methods: {
-			fetchThreadsList(boardSlug, currentPage) {
-				this.FETCH_BOARD_THREADS([boardSlug, currentPage])
+			setBoard(boardSlug) {
+				this.loading = true
+				this.$store.dispatch('SET_BOARD_ACTIVE', boardSlug)
 				.then(() => {
-					// Set content and status
-					this.activeBoard = this.$store.state.appBoardActive
-					this.activeThread = false
-					// Form
-					this.replyed.board = this.activeBoard.slug
-					this.replyed.thread = 0
 					// Windows title
-					this.pageTitle = '/' + this.activeBoard.slug + '/ - ' + this.activeBoard.name
-					this.loaded = true
+					this.titlePage = '/' + this.boardActive.slug + '/ - ' + this.boardActive.name
+					// Status
+					this.loading = false
 				})
-				.catch((error, status) => {
+				.catch((error) => {
+					// Redirect to 404
+					this.$router.replace({ name: 'not-found' })
+				})
+			},
+			fetchThreads(boardSlug, currentPage) {
+				this.loading = true
+				this.$store.dispatch('FETCH_BOARD_THREADS', [boardSlug, currentPage])
+				.then(() => {
+					// Form
+					this.formData.board = this.boardActive.slug
+					this.formData.thread = 0
+					// Status
+					this.loading = false
+					// Отчищаем активный тред
+					this.$store.commit('REMOVE_THREAD_ACTIVE')
+				})
+				.catch((error) => {
 					// Redirect to 404
 					this.$router.replace({ name: 'not-found' })
 				})
 			},
 			fetchThread(boardSlug, threadId) {
-				this.FETCH_BOARD_THREAD([boardSlug, threadId])
+				this.loading = true
+				this.$store.dispatch('FETCH_BOARD_THREAD', [boardSlug, threadId])
 				.then(() => {
-					// Set content and status
-					this.activeThread = this.$store.state.appThreadActive
-					this.activeBoard = false
 					// Form
-					this.replyed.board = this.activeThread.slug
-					this.replyed.thread = this.activeThread.thread.id
-					// Windows title
-					this.pageTitle = '/' + this.activeThread.slug + '/ - ' + this.activeThread.name
-					this.loaded = true
+					this.formData.board = this.boardActive.slug
+					this.formData.thread = this.threadActive.id
+					// Status
+					this.loading = false
+					// Отчищаем список тредов
+					this.$store.commit('REMOVE_THREADS_LIST')
 				})
 				.catch((error) => {
 					// Redirect to 404
@@ -126,46 +151,65 @@
 			},
 
 			refreshThread() {
-				let boardSlug = this.activeThread.slug,
-					threadId = this.activeThread.thread.id,
-					postId = this.activeThread.thread.replys.length > 0
-							? this.activeThread.thread.replys[this.activeThread.thread.replys.length - 1].id
-							: this.activeThread.thread.id
+				let boardSlug = this.boardActive.slug,
+					threadId = this.threadActive.id,
+					postId = this.threadActive.replys.length > 0
+							? this.threadActive.replys[this.threadActive.replys.length - 1].id
+							: this.threadActive.id
 
-				this.REFRESH_BOARD_THREAD([boardSlug, threadId, postId])
+				this.$store.dispatch('REFRESH_BOARD_THREAD', [boardSlug, threadId, postId])
 				.then((replys_data) => {
-					if (replys_data.length > 0 )
-						alert('Новых постов: ' + replys_data.length)
+					if (replys_data.length > 0)
+						console.log('Новых постов: ' + replys_data.length)
 					else
-						alert('Нет новых постов! Чан, блядь, без постинга. На что ты сука расчитываешь?')
+						console.log('Нет новых постов! Чан, блядь, без постинга. На что ты сука расчитываешь?')
 				})
 				.catch((error) => {
-					alert('Проблемы со стороны сервера')
+					console.log('Проблемы со стороны сервера')
 				})
+
+				this.$ga.trackEvent('thread', 'refresh')
+			},
+			openForm() {
+				this.$localStorage.set('form.open', true)
+				this.$emit('form:open')
 			},
 			scrollUp() {
 				window.scrollTo(0, 0)
-			},
-			...mapActions([
-				'REFRESH_BOARD_THREAD',
-				'FETCH_BOARD_THREAD',
-				'FETCH_BOARD_THREADS'
-			])
+			}
 		},
 		watch: {
-			$route() {
-				this.loaded = false
+			async $route(to) {
+				// Дожидаемся установки раздела
+				await this.setBoard(this.$route.params.boardSlug)
+				// А затем уже получаемданные треда
 				if (this.$route.params.threadId)
 					this.fetchThread(this.$route.params.boardSlug, this.$route.params.threadId)
 				else
-					this.fetchThreadsList(this.$route.params.boardSlug, this.$route.query.page)
+					this.fetchThreads(this.$route.params.boardSlug, this.$route.query.page)
 			}
 		},
-		beforeMount() {
+		async mounted() {
+			// Дожидаемся установки раздела
+			await this.setBoard(this.$route.params.boardSlug)
+			// А затем уже получаемданные треда
 			if (this.$route.params.threadId)
 				this.fetchThread(this.$route.params.boardSlug, this.$route.params.threadId)
 			else
-				this.fetchThreadsList(this.$route.params.boardSlug, this.$route.query.page)
+				this.fetchThreads(this.$route.params.boardSlug, this.$route.query.page)
+		},
+		beforeDestroy() {
+			// Удаляем текущую борду
+			this.$store.commit('REMOVE_BOARD_ACTIVE')
+			// Удаляем текущий тред
+			this.$store.commit('REMOVE_THREAD_ACTIVE')
+			// Удаляем список тредов
+			this.$store.commit('REMOVE_THREADS_LIST')
+
+			// Отписались от эвентов
+			this.$off('form:submit')
+			this.$off('form:close')
+			this.$off('form:open')
 		}
 	}
 </script>
