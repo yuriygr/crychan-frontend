@@ -19,7 +19,7 @@
 <script>
 	export default {
 		name: 'neon-form',
-		props: ['board', 'thread'],
+		props: ['board', 'thread', 'show'],
 		data() {
 			return {
 				subject: '',
@@ -35,23 +35,19 @@
 				formData.append('thread', this.thread)
 				formData.append('subject', this.subject)
 				formData.append('message', this.message)
-
+				// Говорим родителю и гуглу о своих действиях в форме
 				this.$parent.$emit('form:submit')
-				this.$ga.trackEvent('form', 'submit')
+				this.$ga.trackEvent('Form', 'Submit')
 			},
 			close() {
-				this.$localStorage.set('form.open', false)
-
+				// Говорим родителю и гуглу о своих действиях в форме
 				this.$parent.$emit('form:close')
-				this.$ga.trackEvent('form', 'close')
+				this.$ga.trackEvent('Form', 'Close')
 			},
 		},
 		computed: {
 			header() {
 				return this.thread == 0  ? 'Create thread' : 'Reply to thread #' + this.thread
-			},
-			show() {
-				return this.$localStorage.get('form.open')
 			}
 		}
 	}

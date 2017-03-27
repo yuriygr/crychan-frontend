@@ -1,7 +1,5 @@
 import Vue from 'vue'
 import VueAnalytics from 'vue-analytics'
-import VueI18n from 'vue-i18n'
-import VueLocalStorage from 'vue-localstorage'
 import Meta from 'vue-meta'
 import { sync } from 'vuex-router-sync'
 
@@ -9,7 +7,6 @@ import App from './components/App'
 
 import router from './router'
 import store from './store'
-import * as locales from './locales'
 import * as filters from './filters'
 
 // some styles
@@ -28,16 +25,6 @@ Object.keys(filters).forEach((key) => {
 	Vue.filter(key, filters[key])
 })
 
-// use locales
-//Vue.use(VueI18n)
-
-// set locales
-/*Object.keys(locales).forEach((lang) => {
-	Vue.locale(lang, locales[lang])
-})*/
-
-// set localsotrage 
-Vue.use(VueLocalStorage)
 
 // o da!
 Vue.directive('draggable', {
@@ -89,8 +76,7 @@ Vue.directive('draggable', {
 		// При убирании мышки удаляем эвенты
 		function mouseup() {
 			// Сохраняем конечно положение
-			vm.$localStorage.set('form.pos.x', formX)
-			vm.$localStorage.set('form.pos.y', formY)
+			vm.$store.commit('NEONFORM_POS', { formX, formY })
 			// И удаляем к хуям эвенты
 			document.removeEventListener('mousemove', mousemove)
 			document.removeEventListener('mouseup', mouseup)

@@ -79,14 +79,14 @@ const mutations = {
 const actions = {
 	// Работа с разделами
 	FETCH_BOARDS_LIST ({ commit }) {
-		return api.board.getList()
+		return api.boards.getList()
 		.then((boards_data) => {
 			commit('SET_BOARDS_LIST', { boards_data })
 			return boards_data
 		})
 	},
 	SET_BOARD_ACTIVE ({ commit }, board_slug) {
-		return api.board.getItem(board_slug)
+		return api.boards.getItem(board_slug)
 		.then((board_data) => {
 			commit('SET_BOARD_ACTIVE', { board_data })
 			return board_data
@@ -95,14 +95,14 @@ const actions = {
 
 	// Работа с тредами
 	FETCH_BOARD_THREADS ({ commit }, [board_slug, page]) {
-		return api.board.getThreads(board_slug, page)
+		return api.threads.getList(board_slug, page)
 		.then((threads_data) => {
 			commit('SET_THREADS_LIST', { threads_data })
 			return threads_data
 		})
 	},
 	FETCH_BOARD_THREAD ({ commit }, [board_slug, thread_id]) {
-		return api.board.getThread(board_slug, thread_id)
+		return api.threads.getItem(board_slug, thread_id)
 		.then((thread_data) => {
 			commit('SET_THREAD_ACTIVE', { thread_data })
 			return thread_data
@@ -110,7 +110,7 @@ const actions = {
 	},
 
 	REFRESH_BOARD_THREAD ({ commit }, [board_slug, thread_id, post_id]) {
-		return api.board.refreshThread(board_slug, thread_id, post_id)
+		return api.threads.refresh(board_slug, thread_id, post_id)
 		.then((replys_data) => {
 			commit('REFRESH_THREAD_ACTIVE', { replys_data })
 			return replys_data

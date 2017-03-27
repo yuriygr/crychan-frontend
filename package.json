@@ -3,24 +3,34 @@
   "version": "1.5.0",
   "description": "A VueJS chan",
   "author": "Yuriy Grinev",
-  "repository" : {
-    "type" : "git",
-    "url" : "https://github.com/yuriygr/crychan-vue.git"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yuriygr/crychan-vue.git"
   },
-  "license" : "SEE LICENSE IN LICENSE",
+  "license": "SEE LICENSE IN LICENSE",
   "scripts": {
     "dev": "node build/dev-server.js",
     "build": "node build/build.js"
   },
   "dependencies": {
+    "autoprefixer": "^6.7.7",
     "axios": "^0.15.3",
-    "es6-promise": "^4.0.5",
-    "vue": "^2.1.0",
-    "vue-analytics": "^2.1.0",
-    "vue-localstorage": "^0.1.3",
-    "vue-meta": "^0.5.3",
-    "vue-router": "^2.1.1",
-    "vuex": "^2.1.2",
+    "babel-core": "^6.24.0",
+    "babel-loader": "^6.4.1",
+    "babel-preset-es2015": "^6.24.0",
+    "babel-register": "^6.24.0",
+    "es6-promise": "^4.1.0",
+    "express": "^4.15.2",
+    "friendly-errors-webpack-plugin": "^1.6.1",
+    "http-proxy-middleware": "^0.17.4",
+    "shelljs": "^0.7.7",
+    "vue": "^2.2.4",
+    "vue-analytics": "^2.4.0",
+    "vue-meta": "^0.5.5",
+    "vue-router": "^2.3.0",
+    "vue-template-compiler": "^2.2.4",
+    "vuex": "^2.2.1",
+    "vuex-persistedstate": "^1.3.0",
     "vuex-router-sync": "^4.1.1"
   },
   "devDependencies": {

@@ -46,10 +46,10 @@
 		props: ['thread', 'open', 'replyLimit'],
 		methods: {
 			hide() {
-				this.$ga.trackEvent('form', 'hide')
+				this.$ga.trackEvent('Thread', 'Hide')
 			},
 			expand() {
-				this.$ga.trackEvent('form', 'expand')
+				this.$ga.trackEvent('Thread', 'Expand')
 			},
 			getOmitted() {
 				let count = this.thread.count_replys - this.replyLimit

@@ -6,37 +6,40 @@ const instance = axios.create({
 	baseURL: api,
 });
 
-const board = {
+const boards = {
 	getList() {
-		return instance.get('board.getList')
+		return instance.get('boards.getList')
 		.then((data) => {
 			const {response} = JSON.parse(data.request.response)
 			return response
 		})
 	},
 	getItem(board_slug) {
-		return instance.get('board.getItem', { params: { board_slug: board_slug }})
+		return instance.get('boards.getItem', { params: { board_slug: board_slug }})
+		.then((data) => {
+			const {response} = JSON.parse(data.request.response)
+			return response
+		})
+	}
+}
+
+const threads = {	
+	getList(board_slug, page) {
+		return instance.get('threads.getList', { params: { board_slug: board_slug, page: page }})
 		.then((data) => {
 			const {response} = JSON.parse(data.request.response)
 			return response
 		})
 	},
-	getThreads(board_slug, page) {
-		return instance.get('board.getThreads', { params: { board_slug: board_slug, page: page }})
+	getItem(board_slug, thread_id) {
+		return instance.get('threads.getItem', { params: { board_slug: board_slug, thread_id: thread_id }})
 		.then((data) => {
 			const {response} = JSON.parse(data.request.response)
 			return response
 		})
 	},
-	getThread(board_slug, thread_id) {
-		return instance.get('board.getThread', { params: { board_slug: board_slug, thread_id: thread_id }})
-		.then((data) => {
-			const {response} = JSON.parse(data.request.response)
-			return response
-		})
-	},
-	refreshThread(board_slug, thread_id, after) {
-		return instance.get('board.refreshThread', { params: { board_slug: board_slug, thread_id: thread_id, after: after }})
+	refresh(board_slug, thread_id, after) {
+		return instance.get('threads.refresh', { params: { board_slug: board_slug, thread_id: thread_id, after: after }})
 		.then((data) => {
 			const {response} = JSON.parse(data.request.response)
 			return response
@@ -78,4 +81,4 @@ const news = {
 	}
 }
 
-export { board, pages, news }
+export { boards, threads, pages, news }

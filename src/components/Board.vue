@@ -1,6 +1,11 @@
 <template>
-	<section class="content">
+	<section class="board">
 		<div class="warp">
+			<div v-if="boardActive" class="board-title">
+				<router-link :to="{ name: 'board', params: { boardSlug: boardActive.slug } }">/{{ boardActive.slug }}/ - {{ boardActive.name }}</router-link>
+				<span v-if="boardActive.description" class="board-info"> - {{ boardActive.description }}</span>
+			</div>
+			<br>
 			<template v-if="threadsList">
 				<div class="board-content" v-if="threadsList.items.length > 0">
 					<thread v-for="thread in threadsList.items" key="thread.id" :thread="thread" :replyLimit="boardActive.replyLimit" :open="false">
@@ -19,12 +24,8 @@
 					<p>Удивительно, но такое возможно. Ты можешь исравить ситуацию создав первый тред. Слови GET 1.</p>
 				</div>
 				<div class="board-nav">
-					<div class="block">
-						<span><a href="#" @click="openForm" @click.prevent.stop>Open form</a></span>
-					</div>
-					<div class="block">
-						<span><a href="#" @click="scrollUp"  @click.prevent.stop>Scroll up</a></span>
-					</div>
+					<a href="#" class="btn" @click="toggleForm" @click.prevent.stop>Open form</a>
+					<a href="#" class="btn" @click="scrollUp" @click.prevent.stop>Scroll up</a>
 				</div>
 			</template>
 			<template v-if="threadActive">
@@ -34,19 +35,14 @@
 					</thread>
 				</div>
 				<div class="board-nav">
-					<div class="block">
-						<span><router-link :to="{ name: 'board', params: { boardSlug: boardActive.slug } }">Back</router-link></span>
-					</div>
-					<div class="block">
-						<span><a href="#" @click="refreshThread" @click.prevent.stop>Refresh thread</a></span>
-						<span><a href="#" @click="openForm" @click.prevent.stop>Open form</a></span>
-					</div>
-					<div class="block">
-						<span><a href="#" @click="scrollUp"  @click.prevent.stop>Scroll up</a></span>
-					</div>
+					<router-link class="btn" :to="{ name: 'board', params: { boardSlug: boardActive.slug } }">Back</router-link>
+					<a href="#" class="btn" @click="refreshThread" @click.prevent.stop>Refresh thread</a>
+					<a href="#" class="btn" @click="toggleForm" @click.prevent.stop>Open form</a>
+					<a href="#" class="btn" @click="scrollUp" @click.prevent.stop>Scroll up</a>
 				</div>
 			</template>
 		</div>
+		<neon-form :board="formData.board" :thread="formData.thread" :show="formData.show"></neon-form>
 		<loading :show="loading"></loading>
 	</section>
 </template>
@@ -74,8 +70,11 @@
 				titlePage: 'Loading...',
 
 				formData: {
-					board: '',
-					thread: ''
+					board: false,
+					thread: 0,
+					show: false,
+					pos_x: 0,
+					pos_y: 0
 				}
 			}
 		},
@@ -85,6 +84,7 @@
 				console.log('Board', 'Form submit')
 			})
 			this.$on('form:close', () => {
+				this.toggleForm()
 				console.log('Board', 'Form closed')
 			})
 		},
@@ -162,18 +162,21 @@
 					if (replys_data.length > 0)
 						console.log('Новых постов: ' + replys_data.length)
 					else
-						console.log('Нет новых постов! Чан, блядь, без постинга. На что ты сука расчитываешь?')
+						console.log('Нет новых постов!')
 				})
 				.catch((error) => {
-					console.log('Проблемы со стороны сервера')
+					console.log(error)
 				})
 
-				this.$ga.trackEvent('thread', 'refresh')
+				this.$ga.trackEvent('Thread', 'Refresh')
 			},
-			openForm() {
-				this.$localStorage.set('form.open', true)
-				this.$emit('form:open')
+
+
+			toggleForm() {
+				this.formData.show = !this.formData.show
+				this.$ga.trackEvent('Form', this.formData.show ? 'Open' : 'Close')
 			},
+
 			scrollUp() {
 				window.scrollTo(0, 0)
 			}

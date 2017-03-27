@@ -9,6 +9,9 @@
 				<li>
 					<router-link :to="{ name: 'page', params: { pageSlug: 'donation' } }" exact>Donation</router-link>
 				</li>
+				<li>
+					<router-link :to="{ name: 'page', params: { pageSlug: 'api' } }" exact>API</router-link>
+				</li>
 				<li><a href="https://t.me/crychan">Telegram</a></li>
 			</ul>
 		</div>

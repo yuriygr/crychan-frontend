@@ -52,6 +52,10 @@
 		},
 		mounted() {
 			this.fetchPage(this.$route.params)
+		},
+		beforeDestroy() {
+			// Удаляем текущую страницу
+			this.$store.commit('REMOVE_PAGE_ACTIVE')
 		}
 	}
 </script>
