@@ -18,7 +18,7 @@
 				</a>
 			</div>
 
-			<div class="post-text" v-html="post.text"></div>
+			<div class="post-message" v-html="post.message"></div>
 		</div>
 		<div class="clear"></div>
 	</div>

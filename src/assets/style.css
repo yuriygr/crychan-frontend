@@ -113,6 +113,7 @@ footer {
  * NEON FORM
  */
 .neon-form {
+	top: 2px;
 	background: rgba(0, 0, 0, 0.69);
 	border: 1px solid #494949;
 	border-radius: 5px;
@@ -271,8 +272,8 @@ ul.pagination > li > a.router-link-active {
 	padding: 2px 7px;
 }
 /* Post Text */
-.post-text { margin: 5px 0; word-break: break-word; display: block; overflow: auto; max-height: 300px; }
-.post-text p { margin: 0 0 3px 0; }
+.post-message { margin: 5px 0; word-break: break-word; display: block; overflow: auto; max-height: 300px; }
+.post-message p { margin: 0 0 3px 0; }
 
 .subject {
 	color: #000;

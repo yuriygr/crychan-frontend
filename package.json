@@ -1,11 +1,11 @@
 {
-  "name": "crychan-vue",
+  "name": "crychan-frontend",
   "version": "1.5.0",
   "description": "A VueJS chan",
   "author": "Yuriy Grinev",
   "repository": {
     "type": "git",
-    "url": "https://github.com/yuriygr/crychan-vue.git"
+    "url": "https://github.com/yuriygr/crychan-frontend.git"
   },
   "license": "SEE LICENSE IN LICENSE",
   "scripts": {
@@ -26,6 +26,8 @@
     "shelljs": "^0.7.7",
     "vue": "^2.2.4",
     "vue-analytics": "^2.4.0",
+    "vue-bus": "^0.3.0",
+    "vue-lazyload": "^1.0.3",
     "vue-meta": "^0.5.5",
     "vue-router": "^2.3.0",
     "vue-template-compiler": "^2.2.4",

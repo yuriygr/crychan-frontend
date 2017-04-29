@@ -9,6 +9,7 @@
 </template>
 
 <script>
+	import { mapState } from 'vuex'
 	import Loading from './common/Loading'
 
 	export default {
@@ -19,7 +20,6 @@
 		data() {
 			return {
 				loading: false,
-				pageActive: {},
 				titlePage: 'Loading...'
 			}
 		},
@@ -28,13 +28,17 @@
 				title: this.titlePage
 			}
 		},
+		computed: {
+			...mapState([
+				'pageActive'
+			])
+		},
 		methods: {
 			fetchPage(params) {
 				this.loading = true
 				this.$store.dispatch('FETCH_PAGE', params.pageSlug)
-				.then(() => {
-					// Set content and status
-					this.pageActive = this.$store.state.pageActive
+				.then((page_data) => {
+					// Title and status
 					this.titlePage = this.pageActive.name
 					this.loading = false
 				})

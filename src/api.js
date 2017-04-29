@@ -1,21 +1,23 @@
 import axios from 'axios'
 
-const api = 'https://api.crychan.com/'
-
 const instance = axios.create({
-	baseURL: api,
-});
+	baseURL: 'https://api.crychan.com/',
+	headers: {
+		'Accept': 'application/json',
+		'Content-Type': 'application/json',
+	}
+})
 
 const boards = {
-	getList() {
-		return instance.get('boards.getList')
+	list() {
+		return instance.get('boards.list')
 		.then((data) => {
 			const {response} = JSON.parse(data.request.response)
 			return response
 		})
 	},
-	getItem(board_slug) {
-		return instance.get('boards.getItem', { params: { board_slug: board_slug }})
+	item(params) {
+		return instance.get('boards.item', { params })
 		.then((data) => {
 			const {response} = JSON.parse(data.request.response)
 			return response
@@ -24,22 +26,30 @@ const boards = {
 }
 
 const threads = {	
-	getList(board_slug, page) {
-		return instance.get('threads.getList', { params: { board_slug: board_slug, page: page }})
+	list(params) {
+		return instance.get('threads.list', { params })
 		.then((data) => {
 			const {response} = JSON.parse(data.request.response)
 			return response
 		})
 	},
-	getItem(board_slug, thread_id) {
-		return instance.get('threads.getItem', { params: { board_slug: board_slug, thread_id: thread_id }})
+	item(params) {
+		return instance.get('threads.item', { params })
 		.then((data) => {
 			const {response} = JSON.parse(data.request.response)
 			return response
 		})
 	},
-	refresh(board_slug, thread_id, after) {
-		return instance.get('threads.refresh', { params: { board_slug: board_slug, thread_id: thread_id, after: after }})
+	refresh(params) {
+		return instance.get('threads.refresh', { params })
+		.then((data) => {
+			const {response} = JSON.parse(data.request.response)
+			return response
+		})
+	},
+	add(formData) {
+		let config = { headers: { 'Content-Type': 'multipart/form-data' } }
+		return instance.post('threads.add', formData, config)
 		.then((data) => {
 			const {response} = JSON.parse(data.request.response)
 			return response
@@ -48,15 +58,15 @@ const threads = {
 }
 
 const pages = {
-	getList() {
-		return instance.get('pages.getList')
+	list() {
+		return instance.get('pages.list')
 		.then((data) => {
 			const {response} = JSON.parse(data.request.response)
 			return response
 		})
 	},
-	getItem(page_slug) {
-		return instance.get('pages.getItem', { params: { page_slug: page_slug }})
+	item(params) {
+		return instance.get('pages.item', { params })
 		.then((data) => {
 			const {response} = JSON.parse(data.request.response)
 			return response
@@ -65,15 +75,15 @@ const pages = {
 }
 
 const news = {
-	getList(page) {
-		return instance.get('news.getList', { params: { page: page }})
+	list(params) {
+		return instance.get('news.list', { params })
 		.then((data) => {
 			const {response} = JSON.parse(data.request.response)
 			return response
 		})
 	},
-	getItem(news_slug) {
-		return instance.get('news.getItem', { params: { news_slug: news_slug }})
+	item(params) {
+		return instance.get('news.item', { params })
 		.then((data) => {
 			const {response} = JSON.parse(data.request.response)
 			return response

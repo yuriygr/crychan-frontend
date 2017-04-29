@@ -27,14 +27,16 @@
 				</a>
 			</div>
 
-			<div class="post-text" v-html="thread.text"></div>
+			<div class="post-message" v-html="thread.message"></div>
 		</div>
 		<div class="omitted" v-if="hasOmitted && !open">
 			{{ getOmitted() }}
 			<a @click="expand" @click.prevent.stop href="#">Expand</a>
 		</div>
-		<div class="thread-replys" v-if="hasReplys">
-			<slot></slot>
+		<div class="thread-replies" v-if="hasReplies">
+			<transition-group name="list">
+				<slot></slot>
+			</transition-group>
 		</div>
 		<hr>
 	</div>
@@ -52,19 +54,32 @@
 				this.$ga.trackEvent('Thread', 'Expand')
 			},
 			getOmitted() {
-				let count = this.thread.count_replys - this.replyLimit
+				let count = this.thread.count_replies - this.replyLimit
 				let cases = [2, 0, 1, 1, 1, 2];
 				let titles = ['reply', 'replies', 'replies'];
 				return count + ' ' + titles[ (count%100 > 4 && count%100 < 20) ? 2 : cases[Math.min(count%10, 5)] ] + ' omitted.';
 			},
 		},
 		computed: {
-			hasReplys() {
-				return this.thread.replys.length > 0
+			hasReplies() {
+				return this.thread.replies.length > 0
 			},
 			hasOmitted() {
-				return this.thread.count_replys > this.replyLimit
+				return this.thread.count_replies > this.replyLimit
 			}
 		}
 	}
 </script>
+<style>
+.list-item {
+  display: inline-block;
+  margin-right: 10px;
+}
+.list-enter-active, .list-leave-active {
+  transition: all .5s;
+}
+.list-enter, .list-leave-to /* .list-leave-active for <2.1.8 */ {
+  opacity: 0;
+  transform: translateY(30px);
+}
+</style>

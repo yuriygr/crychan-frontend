@@ -1,6 +1,9 @@
 import Vue from 'vue'
 import VueAnalytics from 'vue-analytics'
+import VueLazyload from 'vue-lazyload'
+import VueBus from 'vue-bus';
 import Meta from 'vue-meta'
+
 import { sync } from 'vuex-router-sync'
 
 import App from './components/App'
@@ -13,11 +16,11 @@ import * as filters from './filters'
 import 'reset-css/reset.css'
 import 'assets/style.css'
 
-// use Google Analytcs tracking 
+
 const id = 'UA-56787403-2' 
 Vue.use(VueAnalytics, { id, router })
-
-// use VueMeta
+Vue.use(VueLazyload)
+Vue.use(VueBus)
 Vue.use(Meta)
 
 // register global utility filters.
@@ -75,8 +78,6 @@ Vue.directive('draggable', {
 
 		// При убирании мышки удаляем эвенты
 		function mouseup() {
-			// Сохраняем конечно положение
-			vm.$store.commit('NEONFORM_POS', { formX, formY })
 			// И удаляем к хуям эвенты
 			document.removeEventListener('mousemove', mousemove)
 			document.removeEventListener('mouseup', mouseup)

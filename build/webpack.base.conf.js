@@ -27,7 +27,8 @@ module.exports = {
 			'public': path.resolve(__dirname, '../public'),
 			'src': path.resolve(__dirname, '../src'),
 			'assets': path.resolve(__dirname, '../src/assets'),
-			'components': path.resolve(__dirname, '../src/components')
+			'components': path.resolve(__dirname, '../src/components'),
+			'create-api': path.resolve(__dirname, '../src/api.js')
 		}
 	},
 	resolveLoader: {

@@ -9,7 +9,7 @@
 			<template v-if="threadsList">
 				<div class="board-content" v-if="threadsList.items.length > 0">
 					<thread v-for="thread in threadsList.items" key="thread.id" :thread="thread" :replyLimit="boardActive.replyLimit" :open="false">
-						<post v-for="post in thread.replys" key="post.id" :post="post"></post>
+						<post v-for="post in thread.replies" key="post.id" :post="post"></post>
 					</thread>
 					<pagination
 						:name="'board'"
@@ -31,7 +31,7 @@
 			<template v-if="threadActive">
 				<div class="board-content">
 					<thread key="threadActive.id" :thread="threadActive" :open="true">
-						<post v-for="post in threadActive.replys" key="post.id" :post="post"></post>
+						<post v-for="post in threadActive.replies" key="post.id" :post="post"></post>
 					</thread>
 				</div>
 				<div class="board-nav">
@@ -79,13 +79,17 @@
 			}
 		},
 		created() {
-			this.$on('form:submit', () => {
-				this.refreshThread()
-				console.log('Board', 'Form submit')
+			this.$bus.on('form:submit', (created) => {
+				if (created.type == 'reply')
+					this.refreshThread()
+
+				if (created.type == 'thread')
+					this.$router.push('/' + created.board + '/thread/' + created.post)
+
+				this.scrollToPost(created.post)
 			})
-			this.$on('form:close', () => {
+			this.$bus.on('form:close', () => {
 				this.toggleForm()
-				console.log('Board', 'Form closed')
 			})
 		},
 		metaInfo() {
@@ -153,14 +157,14 @@
 			refreshThread() {
 				let boardSlug = this.boardActive.slug,
 					threadId = this.threadActive.id,
-					postId = this.threadActive.replys.length > 0
-							? this.threadActive.replys[this.threadActive.replys.length - 1].id
+					afterId = this.threadActive.replies.length > 0
+							? this.threadActive.replies[this.threadActive.replies.length - 1].id
 							: this.threadActive.id
 
-				this.$store.dispatch('REFRESH_BOARD_THREAD', [boardSlug, threadId, postId])
-				.then((replys_data) => {
-					if (replys_data.length > 0)
-						console.log('Новых постов: ' + replys_data.length)
+				this.$store.dispatch('REFRESH_BOARD_THREAD', [boardSlug, threadId, afterId])
+				.then((replies_data) => {
+					if (replies_data.length > 0)
+						console.log('Новых постов: ' + replies_data.length)
 					else
 						console.log('Нет новых постов!')
 				})
@@ -179,6 +183,14 @@
 
 			scrollUp() {
 				window.scrollTo(0, 0)
+			},
+
+			scrollToPost(post) {
+				this.$nextTick(() => {
+					setTimeout(() => {
+						console.log(post)
+					}, 100)
+				})
 			}
 		},
 		watch: {
@@ -210,9 +222,9 @@
 			this.$store.commit('REMOVE_THREADS_LIST')
 
 			// Отписались от эвентов
-			this.$off('form:submit')
-			this.$off('form:close')
-			this.$off('form:open')
+			this.$bus.off('form:submit')
+			this.$bus.off('form:close')
+			this.$bus.off('form:open')
 		}
 	}
 </script>
