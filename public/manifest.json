@@ -1,5 +1,6 @@
 {
 	"name": "cryChan",
+	"short_name": "cryChan",
 	"icons": [
 		{
 			"src": "\/public\/img\/android-chrome-36x36.png",
@@ -48,6 +49,7 @@
 		}
 	],
 	"theme_color": "#e86b09",
+	"background_color": "#ededed",
 	"start_url": "https:\/\/crychan.com\/",
 	"display": "standalone"
 }

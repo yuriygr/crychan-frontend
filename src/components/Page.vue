@@ -1,25 +1,26 @@
 <template>
 	<section class="content">
 		<div class="warp">
-			<h1 v-html="pageActive.name"></h1>
-			<div v-html="pageActive.text"></div>
+			<template v-if="pageActive">
+				<h1 v-html="pageActive.name"></h1>
+				<hr>
+				<div v-html="pageActive.text"></div>
+			</template>
+			<template v-else>
+				<h4>Loading page</h4>
+				<p>Please wait</p>
+			</template>
 		</div>
-		<loading :show="loading"></loading>
 	</section>
 </template>
 
 <script>
 	import { mapState } from 'vuex'
-	import Loading from './common/Loading'
 
 	export default {
 		name: 'page',
-		components: {
-			Loading
-		},
 		data() {
 			return {
-				loading: false,
 				titlePage: 'Loading...'
 			}
 		},
@@ -35,17 +36,19 @@
 		},
 		methods: {
 			fetchPage(params) {
-				this.loading = true
+				this.$store.commit('SET_LOADING', true)
 				this.$store.dispatch('FETCH_PAGE', params.pageSlug)
 				.then((page_data) => {
 					// Title and status
 					this.titlePage = this.pageActive.name
-					this.loading = false
+					// Status
+					this.$store.commit('SET_LOADING', false)
 				})
 				.catch((error) => {
 					// Redirect to 404
 					this.$router.replace({ name: 'not-found' })
-					return
+					// Status
+					this.$store.commit('SET_LOADING', false)
 				})
 			}
 		},

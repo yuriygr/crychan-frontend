@@ -1,9 +1,9 @@
 <template>
-  <transition>
-    <svg class="spinner" :class="{ show: show }" v-if="show" width="44px" height="44px" viewBox="0 0 44 44">
-      <circle class="path" fill="none" stroke-width="4" stroke-linecap="round" cx="22" cy="22" r="20"></circle>
-    </svg>
-  </transition>
+	<transition>
+		<svg class="spinner" :class="{ show: show }" v-if="show" width="44px" height="44px" viewBox="0 0 44 44">
+			<circle class="path" fill="none" stroke-width="4" stroke-linecap="round" cx="22" cy="22" r="20"></circle>
+		</svg>
+	</transition>
 </template>
 
 <script>
@@ -16,7 +16,7 @@
 <style>
 .spinner {
 	position: fixed;
-	z-index: 999;
+	z-index: 9999;
 	right: 15px;
 	bottom: 15px;
 	transition: opacity 0.15s ease;
@@ -39,7 +39,7 @@
 }
 
 .spinner .path {
-	stroke: #f60;
+	stroke: #d23b45;
 	stroke-dasharray: 126;
 	stroke-dashoffset: 0;
 	transform-origin: center;

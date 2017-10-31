@@ -7,8 +7,11 @@
 				</li>
 			</ul>
 			<ul class="header__links right">
-				<li v-for="(board, index) in boardsList" key="index">
-					<router-link :to="{ name: 'board', params: { boardSlug: board.slug } }" :title="board.name" exact>/{{ board.slug }}/</router-link>
+				<li v-for="(board, index) in boardsList" :key="index">
+					<router-link :to="{ name: 'board', params: { boardSlug: board.slug } }" :title="board.name">/{{ board.slug }}/</router-link>
+				</li>
+				<li>
+					<router-link :to="{ name: 'stream' }">/stream/</router-link>
 				</li>
 				<li>
 					<router-link :to="{ name: 'news' }">/news/</router-link>
@@ -20,7 +23,7 @@
 </template>
 
 <script>
-	import { mapState, mapActions } from 'vuex'
+	import { mapState } from 'vuex'
 
 	export default {
 		name: 'app-header',

@@ -1,18 +1,20 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 
-import * as api from './api'
+import * as api from 'create-api'
 
 Vue.use(Vuex)
 
 const state = {
 	name: 'cryChan',
+	loading: false,
 
 	boardActive: false,
 	boardsList: {},
 
 	threadsList: false,
 	threadActive: false,
+	threadsStream: false,
 
 	pageActive: false,
 
@@ -21,12 +23,22 @@ const state = {
 }
 
 const mutations = {
-	// Работа с разделами
+	/**
+	 * App
+	 */
+	SET_LOADING (state, payload) {
+		state.loading = payload
+	},
+	/**
+	 * Board
+	 */
+	// Заполнение списка разделов
 	SET_BOARDS_LIST (state, payload) {
 		payload.boards_data.forEach((board) => {
 			Vue.set(state.boardsList, board.slug, board)
 		})
 	},
+	// Заполнение раздела и отчистка
 	SET_BOARD_ACTIVE (state, payload) {
 		state.boardActive = payload.board_data
 	},
@@ -34,25 +46,46 @@ const mutations = {
 		state.boardActive = false
 	},
 
-	// Работа с тредами
+	/**
+	 * Thread
+	 */
+	// Заполнение списка тредов и отчистка
 	SET_THREADS_LIST (state, payload) {
 		state.threadsList = payload.threads_data
 	},
 	REMOVE_THREADS_LIST (state) {
 		state.threadsList = false
 	},
+	// Заполнение активного треда и отчистка
 	SET_THREAD_ACTIVE (state, payload) {
 		state.threadActive = payload.thread_data
 	},
 	REMOVE_THREAD_ACTIVE (state) {
 		state.threadActive = false
 	},
-
+	// Заполнение потока и отчистка
+	SET_THREADS_STREAM (state, payload) {
+		state.threadsStream = payload.threads_data
+	},
+	REMOVE_THREADS_STREAM (state) {
+		state._THREAD_STREAM = false
+	},
+	// Обновление треда
 	REFRESH_THREAD_ACTIVE (state, payload) {
 		state.threadActive.replies.push(...payload.replies_data)
 	},
+	// Разворот треда
+	EXPAND_THREAD_ACTIVE (state, payload) {
+		state.threadsList.items.forEach((thread) => {
+			if (thread.id == payload.thread_id)
+				thread.replies = payload.replies_data
+		})
+	},
 
-	// Заполняем текущую страницу
+	/**
+	 * Page
+	 */
+	// Заполняем текущую страницу и отчистка
 	SET_PAGE_ACTIVE (state, payload) {
 		state.pageActive = payload.page_data
 	},
@@ -60,14 +93,17 @@ const mutations = {
 		state.pageActive = false
 	},
 
-	// Заполняем список новостей
+	/**
+	 * News
+	 */
+	// Заполняем список новостей и отчистка
 	SET_NEWS_LIST (state, payload) {
 		state.newsList = payload.news_list
 	},
 	REMOVE_NEWS_LIST (state) {
 		state.newsList = false
 	},
-	// Задаём текущую новость
+	// Заполняем текущую новость и отчистка
 	SET_NEWS_ACTIVE (state, payload) {
 		state.newsActive = payload.news_data
 	},
@@ -108,12 +144,35 @@ const actions = {
 			return thread_data
 		})
 	},
+	FETCH_BOARD_THREADS_STREAM ({ commit }) {
+		return api.threads.stream()
+		.then((threads_data) => {
+			commit('SET_THREADS_STREAM', { threads_data })
+			return threads_data
+		})
+	},
 
 	REFRESH_BOARD_THREAD ({ commit }, [board_slug, thread_id, after_id]) {
 		return api.threads.refresh({ board_slug, thread_id, after_id })
 		.then((replies_data) => {
 			commit('REFRESH_THREAD_ACTIVE', { replies_data })
 			return replies_data
+		})
+	},
+
+	EXPAND_BOARD_THREAD ({ commit }, [board_slug, thread_id]) {
+		return api.threads.expand({ board_slug, thread_id })
+		.then((replies_data) => {
+			commit('EXPAND_THREAD_ACTIVE', { replies_data, thread_id })
+			return replies_data
+		})
+	},
+
+	// Send post
+	SEND_POST_DATA ({ commit }, params) {
+		return api.threads.add(params)
+		.then((data) => {
+			return data
 		})
 	},
 
@@ -140,22 +199,10 @@ const actions = {
 	}
 }
 
-const getters = {
-	boardActive (state) {
-	const { boardActive, boardsList } = state
-		if (boardActive) {
-			return boardsList[boardActive]
-		} else {
-			return []
-		}
-	}
-}
-
 const store = new Vuex.Store({
 	state,
 	mutations,
-	actions,
-	getters
+	actions
 })
 
 export default store

@@ -25,7 +25,7 @@ const boards = {
 	}
 }
 
-const threads = {	
+const threads = {
 	list(params) {
 		return instance.get('threads.list', { params })
 		.then((data) => {
@@ -40,8 +40,22 @@ const threads = {
 			return response
 		})
 	},
+	stream(params) {
+		return instance.get('threads.stream', { params })
+		.then((data) => {
+			const {response} = JSON.parse(data.request.response)
+			return response
+		})
+	},
 	refresh(params) {
 		return instance.get('threads.refresh', { params })
+		.then((data) => {
+			const {response} = JSON.parse(data.request.response)
+			return response
+		})
+	},
+	expand(params) {
+		return instance.get('threads.expand', { params })
 		.then((data) => {
 			const {response} = JSON.parse(data.request.response)
 			return response
@@ -50,6 +64,13 @@ const threads = {
 	add(formData) {
 		let config = { headers: { 'Content-Type': 'multipart/form-data' } }
 		return instance.post('threads.add', formData, config)
+		.then((data) => {
+			const {response} = JSON.parse(data.request.response)
+			return response
+		})
+	},
+	post(params) {
+		return instance.get('threads.post', { params })
 		.then((data) => {
 			const {response} = JSON.parse(data.request.response)
 			return response

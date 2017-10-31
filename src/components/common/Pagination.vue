@@ -1,14 +1,15 @@
 <template>
 	<ul class="pagination" v-if="total > 1">
 		<li v-if="hasBefore()">
-			<router-link :to="{ name: name, query: { page: before } }" exact>Before</router-link>
+			<router-link :to="{ name: name, params: { boardSlug: board }, query: { page: before } }" exact>Before</router-link>
 		</li>
 		<li v-else>Before</li>
-		<li v-for="page in total">
-			<router-link :to="{ name: name, query: { page: page } }" :class="{ current: current == page }" exact>{{ page }}</router-link>
+		<li v-for="page in total" v-if="page != current">
+			<router-link :to="{ name: name, params: { boardSlug: board }, query: { page: page } }" exact>{{ page }}</router-link>
 		</li>
+		<li v-else>{{page}}</li>
 		<li v-if="hasNext()">
-			<router-link :to="{ name: name, query: { page: next } }" exact>Next</router-link>
+			<router-link :to="{ name: name, params: { boardSlug: board }, query: { page: next } }" exact>Next</router-link>
 		</li>
 		<li v-else>Next</li>
 	</ul>
@@ -18,23 +19,27 @@
 	export default {
 		name: 'pagination',
 		props: {
-			name: {
+			'board': {
 				type: String,
 				default: ''
 			},
-			current: {
+			'name': {
+				type: String,
+				default: ''
+			},
+			'current': {
 				type: Number,
 				default: 1
 			},
-			total: {
+			'total': {
 				type: Number,
 				default: 0
 			},
-			before: {
+			'before': {
 				type: Number,
 				default: 0
 			},
-			next: {
+			'next': {
 				type: Number,
 				default: 1
 			}

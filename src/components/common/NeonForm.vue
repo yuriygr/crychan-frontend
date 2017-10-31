@@ -1,6 +1,6 @@
 <template>
-	<div class="neon-form" v-draggable="{ dragOn: 'header' }" v-show="show">
-		<form action="#" method="post" id="form" class="form" @submit.prevent="submit">
+	<div class="neon-form" v-draggble-form="{ dragOn: 'header' }" v-show="formData.show">
+		<form action="#" method="post" id="form" class="form" @submit.prevent="submit" enctype="multipart/form-data">
 			<div class="header">
 				{{ header }}
 				<span class="close" @click="close">✖</span>
@@ -12,37 +12,56 @@
 			<div class="form-group">
 				<textarea v-model="message" @keydown.ctrl.13="submit" id="message" name="message" rows="8" placeholder="Message" tabindex="2"></textarea>
 			</div>
+			<div class="form-group">
+				<span class="actions right">
+					<a href="#" v-bind:class="{ active: sage }" @click="sage = !sage" @click.prevent.stop title="Don't bump thread">sage</a>
+					<a href="#" v-bind:class="{ active: noko }" @click="noko = !noko" @click.prevent.stop title="Return to thread">noko</a>
+				</span>
+				<div class="clear"></div>
+			</div>
+			<div class="form-group">
+				{{file}}
+			</div>
 		</form>
 	</div>
 </template>
 
 <script>
-	import { threads } from 'create-api'
+	import Loading from '../common/Loading'
 
 	export default {
 		name: 'neon-form',
-		props: ['board', 'thread', 'show'],
+		components: {
+			Loading
+		},
+		props: ['formData'],
 		data() {
 			return {
 				subject: '',
 				message: '',
-				sage: ''
+				file: '',
+				sage: false,
+				noko: true
 			}
 		},
 		methods: {
 			submit() {
-				let formData = new FormData()
-				formData.append('board_slug', this.board)
-				formData.append('parent', this.thread)
-				formData.append('subject', this.subject)
-				formData.append('message', this.message)
+				if (this.canSubmit) return
 
-				threads.add(formData)
+				let formData = new FormData()
+					formData.append('board_slug', this.formData.board)
+					formData.append('parent', this.formData.thread)
+					formData.append('subject', this.subject)
+					formData.append('message', this.message)
+					//formData.append('file', this.file)
+					formData.append('sage', (this.sage) ? 1 : 0)
+					formData.append('noko', (this.noko) ? 1 : 0)
+
+				this.$store.commit('SET_LOADING', true)
+				this.$store.dispatch('SEND_POST_DATA', formData)
 				.then((data) => {
-					// Сообщаем гуглу о том, то сделали
-					this.$ga.trackEvent('Form', 'Submit', data.type)
 					if (data.type == 'error') {
-						console.error(data.message)
+						alert(data.message)
 					}
 					if (data.type == 'success') {
 						// Чистим инпуты
@@ -50,30 +69,45 @@
 						// Собщаем приложению о том что ты сейчас сделал
 						this.$bus.emit('form:submit', data.created)
 					}
+
+					this.$ga.event('Form', 'Submit', data.type)
+					// Status
+					this.$store.commit('SET_LOADING', false)
 				})
 				.catch((error) => {
-					console.log(error)
+					alert(error)
+					// Status
+					this.$store.commit('SET_LOADING', false)
 				})
 			},
 			close() {
-				// Сообщаем гуглу о том, то сделали
-				this.$ga.trackEvent('Form', 'Close')
 				// Собщаем приложению о том что ты сейчас сделал
 				this.$bus.emit('form:close')
+
+				this.$ga.event('Form', 'Close')
 			},
 			clear() {
 				// Чистим инпуты
 				this.subject = ''
 				this.message = ''
-				this.sage = ''
-			}
+				this.file = ''
+			},
+			onFileChange(e) {
+				this.file = e.target.files || e.dataTransfer.files
+
+				if (!this.file.length)
+					return;
+			},
 		},
 		computed: {
+			loading () {
+				return this.$store.state.loading
+			},
 			header() {
-				return this.thread == 0  ? 'Create thread' : 'Reply to thread #' + this.thread
+				return this.formData.thread == 0  ? 'Create thread' : 'Reply to thread #' + this.formData.thread
 			},
 			canSubmit() {
-				return !this.message
+				return !this.message || this.loading
 			}
 		}
 	}

@@ -13,12 +13,12 @@
 
 			<div class="post-file left" v-if="post.files.length > 0">
 				<a v-for="file in post.files" :href="file.origin" target="_blank">
-					<img :src="file.thumb">
+					<img :src="file.thumb" :alt="file.type">
 					<span class="file-info">({{ file.resolution }}) {{ file.type }}</span>
 				</a>
 			</div>
 
-			<div class="post-message" v-html="post.message"></div>
+			<div class="post-message" v-link-preview v-post-preview v-html="post.message"></div>
 		</div>
 		<div class="clear"></div>
 	</div>
@@ -27,6 +27,6 @@
 <script>
 	export default {
 		name: 'post',
-		props: ['post'],
+		props: ['post']
 	}
 </script>
